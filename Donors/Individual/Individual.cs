@@ -11,18 +11,18 @@ namespace Donor
         private string accountNumber;
 
 
-        public Individual(string _accountNumber, string _lastName, string _firstName, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email)
+        public Individual(string _accountNumber, string _name, string _lastName, string _firstName, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email)
         {
             this.accountNumber = _accountNumber;
-            this.contactInformation = new ContactInformation(_lastName, _firstName, _email, _phoneNumber);
+            this.contactInformation = new ContactInformation(_name, _lastName, _firstName, _email, _phoneNumber);
             this.billingAddress = new BillingAddress( _address, _city, _state, _zipCode);
             this.transactions = new List<Transaction>();
         }
 
-        public Individual(string _accountNumber, string _lastName, string _firstName, string _email, string _phoneNumber)
+        public Individual(string _accountNumber, string _name, string _lastName, string _firstName, string _email, string _phoneNumber)
         {
             this.accountNumber = _accountNumber;
-            this.contactInformation = new ContactInformation(_lastName, _firstName, _email, _phoneNumber);
+            this.contactInformation = new ContactInformation(_name, _lastName, _firstName, _email, _phoneNumber) ;
             this.transactions = new List<Transaction>();
         }
 
@@ -48,29 +48,31 @@ namespace Donor
 
         }
 
-        public string DonationDate { get; }
-        public float DonationAmount { get; }
-        public string Campaign { get; }
-        public string MiniCampaign { get; }
-        public string Fund { get; }
-        public string TransactionType { get; }
-        public string TransactionMethod { get; }
+        public string DonationDate { set;  get; }
+        public float DonationAmount { set;  get; }
+        public string Campaign { set;  get; }
+        public string MiniCampaign { set; get; }
+        public string Fund { set; get; }
+        public string TransactionType { set; get; }
+        public string TransactionMethod { set; get; }
     } 
 
     public struct ContactInformation
     {
-        public ContactInformation(string _lastName, string _firstName, string _email, string _phoneNumber)
+        public ContactInformation(string _name, string _lastName, string _firstName, string _email, string _phoneNumber)
         {
+            Name = _name;
             LastName = _lastName;
             FirstName = _firstName;
             Email = _email;
             PhoneNumber = _phoneNumber;
         }
 
-        public string LastName { get; }
-        public string FirstName { get; }
-        public string Email { get; }
-        public string PhoneNumber { get; }
+        public string Name { get; set; }
+        public string LastName { set; get; }
+        public string FirstName { set; get; }
+        public string Email { set; get; }
+        public string PhoneNumber { set; get; }
     }
 
     public struct BillingAddress
@@ -83,9 +85,9 @@ namespace Donor
             ZipCode = _zipCode;
         }
 
-        public string CityAddress { get; }
-        public string City { get; }
-        public string State { get; }
-        public string ZipCode { get; }
+        public string CityAddress { set; get; }
+        public string City { set; get; }
+        public string State { set; get; }
+        public string ZipCode { set; get; }
     }
 }
