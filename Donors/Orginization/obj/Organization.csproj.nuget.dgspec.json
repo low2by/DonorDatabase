@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Orginization\\Organization.csproj": {}
+    "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Orginization\\Organization.csproj": {}
   },
   "projects": {
-    "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Orginization\\Organization.csproj": {
+    "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Orginization\\Organization.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Orginization\\Organization.csproj",
+        "projectUniqueName": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Orginization\\Organization.csproj",
         "projectName": "Organization",
-        "projectPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Orginization\\Organization.csproj",
+        "projectPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Orginization\\Organization.csproj",
         "packagesPath": "C:\\Users\\elotubai10\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Orginization\\obj\\",
+        "outputPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Orginization\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\elotubai10\\AppData\\Roaming\\NuGet\\NuGet.Config",

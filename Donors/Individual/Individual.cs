@@ -11,7 +11,7 @@ namespace Donor
         private string accountNumber;
 
 
-        public Individual(string _accountNumber, string _name, string _lastName, string _firstName, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email)
+        public Individual(string _accountNumber, string _name, string _lastName, string _firstName, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type)
         {
             this.accountNumber = _accountNumber;
             this.contactInformation = new ContactInformation(_name, _lastName, _firstName, _email, _phoneNumber);
@@ -19,10 +19,9 @@ namespace Donor
             this.transactions = new List<Transaction>();
         }
 
-        public Individual(string _accountNumber, string _name, string _lastName, string _firstName, string _email, string _phoneNumber)
+        public Individual(string _accountNumber, string _name, string _date, string campaign, string _fund, string _type, string _method, string _amount)
         {
             this.accountNumber = _accountNumber;
-            this.contactInformation = new ContactInformation(_name, _lastName, _firstName, _email, _phoneNumber) ;
             this.transactions = new List<Transaction>();
         }
 
