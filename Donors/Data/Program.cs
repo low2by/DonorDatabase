@@ -14,16 +14,16 @@ namespace Donor
     {
         //Individual constituent;
         private static BloomerangColumnHeaderConstituents header;
-        private static List<Individual> indivConstituents;
+        private static List<Constituents> constituents;
         static void Main(string[] args)
         {
             header = new BloomerangColumnHeaderConstituents();
-            indivConstituents = new List<Individual>();
+            constituents = new List<Constituents>();
             GetExcelFile();
 
-            foreach(Individual name in indivConstituents)
+            foreach(Constituents name in constituents)
             {
-                Console.WriteLine("This is the person: "+name.);
+                Console.WriteLine("This is the person: "+name.GetName()+"\t"+"The Constituent is a/an: "+name.GetTypeOfConstituent());
             }
 
             Console.Read();
@@ -42,7 +42,7 @@ namespace Donor
             int colCount = xlRange.Columns.Count;
 
             //this is for testing. delete leter
-            rowCount = 3;
+            rowCount = 10;
             //colCount = 1;
 
             string cellString;
@@ -110,7 +110,7 @@ namespace Donor
 
         private static void SetIndividualConstituentsFields(ref int i, ref Excel.Range xlRange)
         {
-            indivConstituents.Add(new Individual(GetFieldValue(ref i, ref xlRange, header.AccountNumColNum), 
+            constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, header.AccountNumColNum), 
                 GetFieldValue(ref i, ref xlRange, header.NameColNum), GetFieldValue(ref i, ref xlRange, header.LastNameColNum), GetFieldValue(ref i, ref xlRange, header.FirstNameColNum), 
                 GetFieldValue(ref i, ref xlRange, header.CityAddressColNum), GetFieldValue(ref i, ref xlRange, header.CityColNum), GetFieldValue(ref i, ref xlRange, header.StateColNum), GetFieldValue(ref i, ref xlRange, header.ZipCodeColNum),
                 GetFieldValue(ref i, ref xlRange, header.PhoneColNum), GetFieldValue(ref i, ref xlRange, header.EmailColNum),

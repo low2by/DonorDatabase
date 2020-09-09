@@ -1,0 +1,9 @@
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\bin\Debug\netstandard2.0\Constituents.deps.json
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\bin\Debug\netstandard2.0\Constituents.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\bin\Debug\netstandard2.0\Constituents.pdb
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.csprojAssemblyReference.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.AssemblyInfoInputs.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.AssemblyInfo.cs
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.csproj.CoreCompileInputs.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.pdb

@@ -1,11 +1,13 @@
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Data.exe.config
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Data.exe
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Data.pdb
-C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Individual.dll
-C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Individual.pdb
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.csprojAssemblyReference.cache
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.csproj.ResolveComReference.cache
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.csproj.CoreCompileInputs.cache
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.csproj.CopyComplete
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.exe
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.pdb
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Constituents.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Organization.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Constituents.pdb
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Organization.pdb

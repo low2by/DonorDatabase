@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mEIClaWrVSq3OpUV0bI9+0At1+l7xHa/z8bdyL5QN4JHcsl3VtqTZJp15Yc48UiIHNd22eUYJ8I2FsiOKPHpMQ==",
+  "dgSpecHash": "BNK1bDD7VHHKDM23WwhZh5DxyEwAvjqDmIE83nyum9EOyv9mrLYqn8nQyKJN2bzGLZewv+CUXHivbi+aBnlwqw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Individual.csproj",
+  "projectFilePath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\elotubai10\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\elotubai10\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"

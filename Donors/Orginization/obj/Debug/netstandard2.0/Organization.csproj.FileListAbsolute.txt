@@ -1,0 +1,9 @@
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\bin\Debug\netstandard2.0\Organization.deps.json
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\bin\Debug\netstandard2.0\Organization.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\bin\Debug\netstandard2.0\Organization.pdb
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\obj\Debug\netstandard2.0\Organization.csprojAssemblyReference.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\obj\Debug\netstandard2.0\Organization.AssemblyInfoInputs.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\obj\Debug\netstandard2.0\Organization.AssemblyInfo.cs
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\obj\Debug\netstandard2.0\Organization.csproj.CoreCompileInputs.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\obj\Debug\netstandard2.0\Organization.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Orginization\obj\Debug\netstandard2.0\Organization.pdb

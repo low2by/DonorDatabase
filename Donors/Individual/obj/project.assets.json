@@ -185,11 +185,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Individual\\Individual.csproj",
-      "projectName": "Individual",
-      "projectPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Individual\\Individual.csproj",
+      "projectUniqueName": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
+      "projectName": "Constituents",
+      "projectPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
       "packagesPath": "C:\\Users\\elotubai10\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Individual\\obj\\",
+      "outputPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\elotubai10\\AppData\\Roaming\\NuGet\\NuGet.Config",

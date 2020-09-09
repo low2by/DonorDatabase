@@ -50,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Individual\Individual.csproj">
+    <ProjectReference Include="..\Individual\Constituents.csproj">
       <Project>{fa5850fc-b20d-4e84-a7b3-640a04f5d702}</Project>
-      <Name>Individual</Name>
+      <Name>Constituents</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace Donor
 {
-    public class Individual
+    public class Constituents
     {
         private List<Transaction> transactions;
         private ContactInformation contactInformation;
         private BillingAddress billingAddress;
         private string accountNumber;
+        private string typeOfConstituent;
 
 
-        public Individual(string _accountNumber, string _name, string _lastName, string _firstName, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type)
+        public Constituents(string _accountNumber, string _name, string _lastName, string _firstName, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type)
         {
             this.accountNumber = _accountNumber;
+            this.typeOfConstituent = _type;
             this.contactInformation = new ContactInformation(_name, _lastName, _firstName, _email, _phoneNumber);
             this.billingAddress = new BillingAddress( _address, _city, _state, _zipCode);
-            this.transactions = new List<Transaction>();
-        }
-
-        public Individual(string _accountNumber, string _name, string _date, string campaign, string _fund, string _type, string _method, string _amount)
-        {
-            this.accountNumber = _accountNumber;
             this.transactions = new List<Transaction>();
         }
 
@@ -29,6 +26,56 @@ namespace Donor
         {
             Transaction newTransaction = new Transaction(_donationDate, _campaign, _miniCampaign, _fund, _type, _method, _donationAmount);
             this.transactions.Add(newTransaction);
+        }
+
+        public string GetAccountNumber()
+        {
+            return accountNumber;
+        }
+
+        public string GetName()
+        {
+            return contactInformation.LastName + ", " + contactInformation.FirstName;
+        }
+
+        public string GetTypeOfConstituent()
+        {
+            return typeOfConstituent;
+        }
+
+        public string GetAddress()
+        {
+            return billingAddress.CityAddress;
+        }
+
+        public string GetCity()
+        {
+            return billingAddress.State;
+        }
+
+        public string GetZipCode()
+        {
+            return billingAddress.ZipCode;
+        }
+
+        public string GetLastName()
+        {
+            return contactInformation.LastName;
+        }
+
+        public string GetFirstName()
+        {
+            return contactInformation.FirstName;
+        }
+
+        public string GetEmail()
+        {
+            return contactInformation.Email;
+        }
+
+        public string GetPhoneNumber()
+        {
+            return contactInformation.PhoneNumber;
         }
 
     }
