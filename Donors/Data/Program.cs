@@ -13,17 +13,34 @@ namespace Donor
     class Program
     {
         //Individual constituent;
-        private static BloomerangColumnHeaderConstituents header;
+        private static BloomerangColumnHeaderConstituents headerConstituents;
+        private static BloomerangColumnHeaderTransaction headerTransaction;
         private static List<Constituents> constituents;
+        private static List<Transaction> transactions;
         static void Main(string[] args)
         {
-            header = new BloomerangColumnHeaderConstituents();
+            headerConstituents = new BloomerangColumnHeaderConstituents();
+            headerTransaction = new BloomerangColumnHeaderTransaction();
             constituents = new List<Constituents>();
+            transactions = new List<Transaction>();
             GetExcelFile();
 
             foreach(Constituents name in constituents)
             {
-                Console.WriteLine("This is the person: "+name.GetName()+"\t"+"The Constituent is a/an: "+name.GetTypeOfConstituent());
+                Console.WriteLine("Name:\t"+name.GetName()+"\nType:\t"+name.GetTypeOfConstituent()+"\nAccount:\t"+name.GetAccountNumber() 
+                    + "\nStreet:\t"+name.GetAddress() +"\nCity:\t"+name.GetCity()+"\nState:\t"+name.GetState() + "\nZip Code:\t" + name.GetZipCode()
+                    + "\nEmail:\t"+ name.GetEmail()+ "\nPhone Number:\t"+name.GetPhoneNumber()+"\n\r\n\r");
+
+
+            }
+
+            foreach (Transaction name in transactions)
+            {
+                Console.WriteLine("Name:\t" + name.GetName + "\nAccount:\t"+name.GetAccountNumber+ "\nDate:\t" + name.DonationDate + "\nCampaign:\t" + name.Campaign
+                    + "\nMini-Campaign:\t" + name.MiniCampaign + "\nFund:\t" + name.Fund + "\nType:\t" + name.TransactionType + "\nMethod:\t" + name.TransactionMethod
+                    + "\nAmount:\t" + name.DonationAmount + "\n\r\n\r");
+
+
             }
 
             Console.Read();
@@ -34,7 +51,7 @@ namespace Donor
 
             //Create COM Objects. Create a COM object for everything that is referenced
             Excel.Application xlApp = new Excel.Application();
-            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\elotubai10\Desktop\all_Individuals_Organizations_proper_information.xlsx");
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\elotubai10\Desktop\all_transactions_constituent_bloomerang.xlsx");
             Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
             Excel.Range xlRange = xlWorksheet.UsedRange;
 
@@ -42,7 +59,7 @@ namespace Donor
             int colCount = xlRange.Columns.Count;
 
             //this is for testing. delete leter
-            rowCount = 10;
+            rowCount = 5;
             //colCount = 1;
 
             string cellString;
@@ -58,7 +75,20 @@ namespace Donor
                     continue;
                 }
 
-                SetIndividualConstituentsFields(ref i, ref xlRange);
+                if(headerTransaction.AmountColNum == 0)
+                {
+                    //Console.WriteLine("Setting the constituents\n\r\n\r");
+                    SetIndividualConstituentsFields(ref i, ref xlRange);
+                }
+                else
+                {
+                    if (i < 3)
+                        continue;
+                    //Console.WriteLine("Row Count: " + i);
+                    //Console.WriteLine("Setting the transaction\n\r\n\r");
+                    SetTransactions(ref i, ref xlRange);
+                }
+                
 
                 for (int j = 1; j <= colCount; j++)
                 {
@@ -79,12 +109,12 @@ namespace Donor
 
                     }
 
-                    Console.Write(cellString + "\t");
+                    //Console.Write(cellString + "\t");
 
 
 
                 }
-                Console.Write("\r\n\r\n");
+                //Console.Write("\r\n\r\n");
                 //Console.Write(header.FirstNameColNum.ToString() + "\r\n\r\n"); //for test, delete later
             }
             //cleanup
@@ -110,30 +140,46 @@ namespace Donor
 
         private static void SetIndividualConstituentsFields(ref int i, ref Excel.Range xlRange)
         {
-            constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, header.AccountNumColNum), 
-                GetFieldValue(ref i, ref xlRange, header.NameColNum), GetFieldValue(ref i, ref xlRange, header.LastNameColNum), GetFieldValue(ref i, ref xlRange, header.FirstNameColNum), 
-                GetFieldValue(ref i, ref xlRange, header.CityAddressColNum), GetFieldValue(ref i, ref xlRange, header.CityColNum), GetFieldValue(ref i, ref xlRange, header.StateColNum), GetFieldValue(ref i, ref xlRange, header.ZipCodeColNum),
-                GetFieldValue(ref i, ref xlRange, header.PhoneColNum), GetFieldValue(ref i, ref xlRange, header.EmailColNum),
-                GetFieldValue(ref i, ref xlRange, header.TypeColNum)));
+            constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum), 
+                GetFieldValue(ref i, ref xlRange, headerConstituents.NameColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.LastNameColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.FirstNameColNum), 
+                GetFieldValue(ref i, ref xlRange, headerConstituents.CityAddressColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.CityColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.StateColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.ZipCodeColNum),
+                GetFieldValue(ref i, ref xlRange, headerConstituents.PhoneColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.EmailColNum),
+                GetFieldValue(ref i, ref xlRange, headerConstituents.TypeColNum)));
 
            
         }
 
+        private static void SetTransactions(ref int i, ref Excel.Range xlRange)
+        {
+            //do this so we can begin the row at 3
+            transactions.Add(new Transaction(GetFieldValue(ref i, ref xlRange, headerTransaction.AccountNumberColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.NameColNum), 
+                GetFieldValue(ref i, ref xlRange, headerTransaction.DateColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.CampaignColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.MiniCampaignColNum),
+                 GetFieldValue(ref i, ref xlRange, headerTransaction.FundColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.TypeColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.MethodColNum),
+                  GetFieldValue(ref i, ref xlRange, headerTransaction.AmountColNum)));
+        }
+
         private static string GetFieldValue(ref int i, ref Excel.Range xlRange, int _colNum)
         {
-            string name;
+            string name = "";
             int colNum = _colNum;
+            int tmp;
 
             if (xlRange.Cells[i, colNum] != null && xlRange.Cells[i, colNum].Value2 != null)
             {
-                name = xlRange.Cells[i, colNum].Value2.ToString();
-                name = name.Replace("\n", "").Replace("\r", "");
-                //indivConstituents.Add(new Individual())
-            }
-            else
-            {
-                name = "";
+                //name = xlRange.Cells[i, colNum].Value2.ToString();
+                //if(colNum == headerTransaction.DateColNum)
+                //{
+                //    int.TryParse(xlRange.Cells[i, colNum].Value.ToString(), out tmp);
+                //    name = tmp.ToString();
+                //}
+                //else
+                //{
+                //    name = xlRange.Cells[i, colNum].Value2.ToString();
+                //    name = name.Replace("\n", "").Replace("\r", "");
+                //}
 
+                name = xlRange.Cells[i, colNum].Value.ToString();
+                name = name.Replace("\n", "").Replace("\r", "");
             }
 
             return name;
@@ -166,58 +212,108 @@ namespace Donor
         {
             if (headerName.Equals("name"))
             {
-                header.NameColNum = j;
+                headerConstituents.NameColNum = j;
             }
 
             if (headerName.Contains("last") && headerName.Contains("name"))
             {
-                header.LastNameColNum = j;
+                headerConstituents.LastNameColNum = j;
             }
 
             if (headerName.Contains("first") && headerName.Contains("name"))
             {
-                header.FirstNameColNum = j;
+                headerConstituents.FirstNameColNum = j;
             }
 
             if (headerName.Contains("account") && headerName.Contains("number"))
             {
-                header.AccountNumColNum = j;
+                headerConstituents.AccountNumColNum = j;
             }
 
             if (headerName.Contains("primary") && headerName.Contains("street"))
             {
-                header.CityAddressColNum = j;
+                headerConstituents.CityAddressColNum = j;
             }
 
             if (headerName.Contains("primary") && headerName.Contains("city"))
             {
-                header.CityColNum = j;
+                headerConstituents.CityColNum = j;
             }
 
             if (headerName.Contains("primary") && headerName.Contains("state"))
             {
-                header.StateColNum = j;
+                headerConstituents.StateColNum = j;
             }
 
             if (headerName.Contains("primary") && headerName.Contains("zip") && headerName.Contains("code"))
             {
-                header.ZipCodeColNum = j;
+                headerConstituents.ZipCodeColNum = j;
             }
 
             if (headerName.Contains("primary") && headerName.Contains("email") && headerName.Contains("address"))
             {
-                header.EmailColNum = j;
+                headerConstituents.EmailColNum = j;
             }
 
             if (headerName.Equals("type"))
             {
-                header.TypeColNum = j;
+                headerConstituents.TypeColNum = j;
             }
 
             if (headerName.Contains("primary") && headerName.Contains("phone") && headerName.Contains("number"))
             {
-                header.PhoneColNum = j;
+                headerConstituents.PhoneColNum = j;
             }
+
+            //for transactions
+            if (headerName.Equals("name"))
+            {
+                headerTransaction.NameColNum = j;
+            }
+
+            if (headerName.Contains("date"))
+            {
+                headerTransaction.DateColNum = j;
+            }
+
+            //for transactions
+            if (headerName.Contains("campaign") && !headerName.Contains("mini"))
+            {
+                headerTransaction.CampaignColNum = j;
+            }
+
+            if (headerName.Contains("mini") && headerName.Contains("-campaign"))
+            {
+                headerTransaction.MiniCampaignColNum = j;
+            }
+
+            if (headerName.Contains("fund"))
+            {
+                headerTransaction.FundColNum = j;
+            }
+
+            if (headerName.Contains("type"))
+            {
+                headerTransaction.TypeColNum = j;
+            }
+
+            if (headerName.Contains("method"))
+            {
+                headerTransaction.MethodColNum = j;
+            }
+
+            if (headerName.Contains("amount"))
+            {
+                headerTransaction.AmountColNum = j;
+            }
+
+            if (headerName.Contains("account") && headerName.Contains("number"))
+            {
+                headerTransaction.AccountNumberColNum = j;
+            }
+
+            
+
         }
 
         public static void CreateIndividualConstituents(Excel.Range xlRange)

@@ -6,7 +6,7 @@ namespace Donor
 {
     public class Constituents
     {
-        private List<Transaction> transactions;
+        private List<Donation> transactions;
         private ContactInformation contactInformation;
         private BillingAddress billingAddress;
         private string accountNumber;
@@ -19,13 +19,12 @@ namespace Donor
             this.typeOfConstituent = _type;
             this.contactInformation = new ContactInformation(_name, _lastName, _firstName, _email, _phoneNumber);
             this.billingAddress = new BillingAddress( _address, _city, _state, _zipCode);
-            this.transactions = new List<Transaction>();
+            this.transactions = new List<Donation>();
         }
 
-        public void AddNewTransaction(string _donationDate, string _campaign, string _miniCampaign, string _fund, string _type, string _method, float _donationAmount)
+        public void AddTransaction(Transaction donation)
         {
-            Transaction newTransaction = new Transaction(_donationDate, _campaign, _miniCampaign, _fund, _type, _method, _donationAmount);
-            this.transactions.Add(newTransaction);
+            transactions.Add(new Donation(donation.DonationDate, donation.Campaign, donation.MiniCampaign, donation.Fund, donation.TransactionType, donation.TransactionMethod, donation.DonationAmount));
         }
 
         public string GetAccountNumber()
@@ -46,6 +45,11 @@ namespace Donor
         public string GetAddress()
         {
             return billingAddress.CityAddress;
+        }
+
+        public string GetState()
+        {
+            return billingAddress.State;
         }
 
         public string GetCity()
@@ -80,28 +84,7 @@ namespace Donor
 
     }
 
-    public struct Transaction
-    {
-        public Transaction(string _donationDate, string _campaign, string _miniCampaign, string _fund, string _type, string _method, float _donationAmount)
-        {
-            DonationDate = _donationDate;
-            DonationAmount = _donationAmount;
-            Campaign = _campaign;
-            MiniCampaign = _miniCampaign;
-            Fund = _fund;
-            TransactionType = _type;
-            TransactionMethod = _method;
 
-        }
-
-        public string DonationDate { set;  get; }
-        public float DonationAmount { set;  get; }
-        public string Campaign { set;  get; }
-        public string MiniCampaign { set; get; }
-        public string Fund { set; get; }
-        public string TransactionType { set; get; }
-        public string TransactionMethod { set; get; }
-    } 
 
     public struct ContactInformation
     {
@@ -135,5 +118,28 @@ namespace Donor
         public string City { set; get; }
         public string State { set; get; }
         public string ZipCode { set; get; }
+    }
+
+    public struct Donation
+    {
+        public Donation(string _donationDate, string _campaign, string _miniCampaign, string _fund, string _type, string _method, string _donationAmount)
+        {
+            DonationDate = _donationDate;
+            DonationAmount = _donationAmount;
+            Campaign = _campaign;
+            MiniCampaign = _miniCampaign;
+            Fund = _fund;
+            TransactionType = _type;
+            TransactionMethod = _method;
+
+        }
+
+        public string DonationDate { set; get; }
+        public string DonationAmount { set; get; }
+        public string Campaign { set; get; }
+        public string MiniCampaign { set; get; }
+        public string Fund { set; get; }
+        public string TransactionType { set; get; }
+        public string TransactionMethod { set; get; }
     }
 }

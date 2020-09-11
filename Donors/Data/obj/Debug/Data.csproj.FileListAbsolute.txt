@@ -8,6 +8,6 @@ C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.csproj
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.exe
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\obj\Debug\Data.pdb
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Constituents.dll
-C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Organization.dll
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Constituents.pdb
-C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Organization.pdb
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Transactions.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Data\bin\Debug\Transactions.pdb

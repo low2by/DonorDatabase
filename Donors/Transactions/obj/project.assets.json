@@ -25,16 +25,6 @@
         "build": {
           "build/netstandard2.0/NETStandard.Library.targets": {}
         }
-      },
-      "Transactions/1.0.0": {
-        "type": "project",
-        "framework": ".NETStandard,Version=v2.0",
-        "compile": {
-          "bin/placeholder/Transactions.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Transactions.dll": {}
-        }
       }
     }
   },
@@ -182,17 +172,11 @@
         "netstandard.library.2.0.3.nupkg.sha512",
         "netstandard.library.nuspec"
       ]
-    },
-    "Transactions/1.0.0": {
-      "type": "project",
-      "path": "../Transactions/Transactions.csproj",
-      "msbuildProject": "../Transactions/Transactions.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
-      "NETStandard.Library >= 2.0.3",
-      "Transactions >= 1.0.0"
+      "NETStandard.Library >= 2.0.3"
     ]
   },
   "packageFolders": {
@@ -201,11 +185,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
-      "projectName": "Constituents",
-      "projectPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
+      "projectUniqueName": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj",
+      "projectName": "Transactions",
+      "projectPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj",
       "packagesPath": "C:\\Users\\elotubai10\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\obj\\",
+      "outputPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\elotubai10\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -220,11 +204,7 @@
       },
       "frameworks": {
         "netstandard2.0": {
-          "projectReferences": {
-            "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj": {
-              "projectPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {

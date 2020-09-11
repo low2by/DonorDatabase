@@ -1,0 +1,9 @@
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\bin\Debug\netstandard2.0\Transactions.deps.json
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\bin\Debug\netstandard2.0\Transactions.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\bin\Debug\netstandard2.0\Transactions.pdb
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\obj\Debug\netstandard2.0\Transactions.csprojAssemblyReference.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\obj\Debug\netstandard2.0\Transactions.AssemblyInfoInputs.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\obj\Debug\netstandard2.0\Transactions.AssemblyInfo.cs
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\obj\Debug\netstandard2.0\Transactions.csproj.CoreCompileInputs.cache
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\obj\Debug\netstandard2.0\Transactions.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Transactions\obj\Debug\netstandard2.0\Transactions.pdb

@@ -7,3 +7,6 @@ C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netst
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.csproj.CoreCompileInputs.cache
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.dll
 C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.pdb
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\bin\Debug\netstandard2.0\Transactions.dll
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\bin\Debug\netstandard2.0\Transactions.pdb
+C:\Users\elotubai10\source\repos\DonorDatabase\Donors\Individual\obj\Debug\netstandard2.0\Constituents.csproj.CopyComplete

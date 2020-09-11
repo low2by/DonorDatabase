@@ -54,6 +54,10 @@
       <Project>{fa5850fc-b20d-4e84-a7b3-640a04f5d702}</Project>
       <Name>Constituents</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Transactions\Transactions.csproj">
+      <Project>{2338c336-351f-4f15-ba10-06a3d3a76271}</Project>
+      <Name>Transactions</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
