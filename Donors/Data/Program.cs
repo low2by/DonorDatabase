@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.SqlServer.Server;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,23 +26,34 @@ namespace Donor
             transactions = new List<Transaction>();
             GetExcelFile();
 
-            foreach(Constituents name in constituents)
+            //foreach(Constituents name in constituents)
+            //{
+            //    Console.WriteLine("Name:\t"+name.GetName()+"\nType:\t"+name.GetTypeOfConstituent()+"\nAccount:\t"+name.GetAccountNumber() 
+            //        + "\nStreet:\t"+name.GetAddress() +"\nCity:\t"+name.GetCity()+"\nState:\t"+name.GetState() + "\nZip Code:\t" + name.GetZipCode()
+            //        + "\nEmail:\t"+ name.GetEmail()+ "\nPhone Number:\t"+name.GetPhoneNumber()+"\n\r\n\r");
+
+
+            //}
+
+            //foreach (Transaction name in transactions)
+            //{
+            //    Console.WriteLine("Name:\t" + name.GetName + "\nAccount:\t"+name.GetAccountNumber+ "\nDate:\t" + name.DonationDate + "\nCampaign:\t" + name.Campaign
+            //        + "\nMini-Campaign:\t" + name.MiniCampaign + "\nFund:\t" + name.Fund + "\nType:\t" + name.TransactionType + "\nMethod:\t" + name.TransactionMethod
+            //        + "\nAmount:\t" + name.DonationAmount + "\n\r\n\r");
+            //}
+            string addy = "1723 s 2000 E. Sandy";
+            Console.WriteLine(addy);
+
+            addy = addy.ToLower();
+            Console.WriteLine(addy);
+
+            if (addy.Contains(" s "))
             {
-                Console.WriteLine("Name:\t"+name.GetName()+"\nType:\t"+name.GetTypeOfConstituent()+"\nAccount:\t"+name.GetAccountNumber() 
-                    + "\nStreet:\t"+name.GetAddress() +"\nCity:\t"+name.GetCity()+"\nState:\t"+name.GetState() + "\nZip Code:\t" + name.GetZipCode()
-                    + "\nEmail:\t"+ name.GetEmail()+ "\nPhone Number:\t"+name.GetPhoneNumber()+"\n\r\n\r");
-
-
+                addy = addy.Replace(" s ", " S. ");
             }
-
-            foreach (Transaction name in transactions)
-            {
-                Console.WriteLine("Name:\t" + name.GetName + "\nAccount:\t"+name.GetAccountNumber+ "\nDate:\t" + name.DonationDate + "\nCampaign:\t" + name.Campaign
-                    + "\nMini-Campaign:\t" + name.MiniCampaign + "\nFund:\t" + name.Fund + "\nType:\t" + name.TransactionType + "\nMethod:\t" + name.TransactionMethod
-                    + "\nAmount:\t" + name.DonationAmount + "\n\r\n\r");
+            Console.WriteLine(addy);
 
 
-            }
 
             Console.Read();
         }
@@ -90,30 +102,39 @@ namespace Donor
                 }
                 
 
-                for (int j = 1; j <= colCount; j++)
-                {
-                    //if (i == 1)
-                    //    GetHeader(ref colCount, ref xlRange, ref i);
+                //for (int j = 1; j <= colCount; j++)
+                //{
+                //    //if (i == 1)
+                //    //    GetHeader(ref colCount, ref xlRange, ref i);
 
-                    //SetIndividualConstituentsFields(ref i, ref xlRange);
-                    //write the value to the console
-                    if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
-                    {
-                        cellString = xlRange.Cells[i, j].Value2.ToString();
-                        cellString = cellString.Replace("\n", "").Replace("\r", "");
-                        //indivConstituents.Add(new Individual())
-                    }
-                    else
-                    {
-                        cellString = "";
+                //    //SetIndividualConstituentsFields(ref i, ref xlRange);
+                //    //write the value to the console
+                //    if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
+                //    {
+                //        if(j == headerTransaction.DateColNum)
+                //        {
+                //            cellString = xlRange.Cells[i, j].Value2.ToString();
+                //            cellString = cellString.Replace("\n", "").Replace("\r", "");
+                //        }
+                //        else
+                //        {
+                //            cellString = xlRange.Cells[i, j].Value2.ToString();
+                //            cellString = cellString.Replace("\n", "").Replace("\r", "");
+                //        }
+                        
+                //        //indivConstituents.Add(new Individual())
+                //    }
+                //    else
+                //    {
+                //        cellString = "";
 
-                    }
+                //    }
 
-                    //Console.Write(cellString + "\t");
+                //    //Console.Write(cellString + "\t");
 
 
 
-                }
+                //}
                 //Console.Write("\r\n\r\n");
                 //Console.Write(header.FirstNameColNum.ToString() + "\r\n\r\n"); //for test, delete later
             }
@@ -162,28 +183,33 @@ namespace Donor
         {
             string name = "";
             int colNum = _colNum;
-            int tmp;
+            DateTime date;
+            string[] dateFormat;
 
             if (xlRange.Cells[i, colNum] != null && xlRange.Cells[i, colNum].Value2 != null)
             {
                 //name = xlRange.Cells[i, colNum].Value2.ToString();
-                //if(colNum == headerTransaction.DateColNum)
-                //{
-                //    int.TryParse(xlRange.Cells[i, colNum].Value.ToString(), out tmp);
-                //    name = tmp.ToString();
-                //}
-                //else
-                //{
-                //    name = xlRange.Cells[i, colNum].Value2.ToString();
-                //    name = name.Replace("\n", "").Replace("\r", "");
-                //}
+                if (colNum == headerTransaction.DateColNum)
+                {
+                    double.TryParse(xlRange.Cells[i, colNum].Value2.ToString(), out double tmp);
+                    date = DateTime.FromOADate(tmp);
+                    dateFormat = date.GetDateTimeFormats();
+                    name = dateFormat[0];
+                }
+                else
+                {
+                    name = xlRange.Cells[i, colNum].Value2.ToString();
+                    name = name.Replace("\n", "").Replace("\r", "");
+                }
 
-                name = xlRange.Cells[i, colNum].Value.ToString();
-                name = name.Replace("\n", "").Replace("\r", "");
+                //name = xlRange.Cells[i, colNum].Value2.ToString();
+                //name = name.Replace("\n", "").Replace("\r", "");
             }
 
             return name;
         }
+
+
 
         private static void GetHeader(ref int colCount, ref Excel.Range xlRange, ref int i)
         {

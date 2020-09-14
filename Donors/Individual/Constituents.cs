@@ -27,6 +27,75 @@ namespace Donor
             transactions.Add(new Donation(donation.DonationDate, donation.Campaign, donation.MiniCampaign, donation.Fund, donation.TransactionType, donation.TransactionMethod, donation.DonationAmount));
         }
 
+        public bool IsMatchingAddress(Constituents left, Constituents right)
+        {
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return false;
+            return FormatAddress(left.GetAddress()).Equals(FormatAddress(right.GetAddress())) 
+                && left.GetCity().Equals(right.GetCity()) 
+                && FormatState(left.GetState()).Equals(FormatState(right.GetState())) 
+                && left.GetZipCode().Equals(right.GetZipCode());
+        }
+
+        public bool HaveSameLastName(Constituents left, Constituents right)
+        {
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return false;
+            return left.GetLastName().Contains(right.GetLastName());
+        }
+
+        private static string FormatAddress(string address)
+        {
+            address = address.ToLower();
+            if (address.Contains(" s "))
+                address = address.Replace(" s ", " s. ");
+
+            if (address.Contains(" e "))
+                address = address.Replace(" e ", " e. ");
+
+            if (address.Contains(" dr "))
+                address = address.Replace(" dr ", " dr. ");
+
+            if (address.Contains(" st "))
+                address = address.Replace(" st ", " st. ");
+
+            if (address.Contains(" lane "))
+                address = address.Replace(" lane ", " ln ");
+
+            return FirstCharUpperCase(ref address);
+        }
+
+        private static string FormatState(string state)
+        {
+            state = state.ToLower();
+            state = state.Trim();
+            if (state.Contains("slc"))
+                state = state.Replace("slc", "salt lake city");
+            return FirstCharUpperCase(ref state);
+        }
+
+        private static string FirstCharUpperCase(ref string address)
+        {
+            char[] eachCharArr;
+            string eachString;
+            string[] arr = new string[] { "" };
+            arr = address.Split(' ');
+            for (int i = 0; i < arr.Length; i++)
+            {
+                eachString = arr[i].ToString();
+                eachCharArr = eachString.ToCharArray();
+
+                if (int.TryParse(eachCharArr[0].ToString(), out int result))
+                    continue;
+
+                eachString = char.ToUpper(eachCharArr[0]).ToString();
+
+                arr[i] = eachString;
+            }
+
+            return arr.ToString();
+        }
+
         public string GetAccountNumber()
         {
             return accountNumber;
