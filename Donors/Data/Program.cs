@@ -199,11 +199,9 @@ namespace Donor
                 else
                 {
                     name = xlRange.Cells[i, colNum].Value2.ToString();
-                    name = name.Replace("\n", "").Replace("\r", "");
+                    
                 }
 
-                //name = xlRange.Cells[i, colNum].Value2.ToString();
-                //name = name.Replace("\n", "").Replace("\r", "");
             }
 
             return name;

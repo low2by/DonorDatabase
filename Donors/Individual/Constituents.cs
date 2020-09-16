@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Text.RegularExpressions;
 
 namespace Donor
 {
@@ -33,7 +34,7 @@ namespace Donor
                 return false;
             return FormatAddress(left.GetAddress()).Equals(FormatAddress(right.GetAddress())) 
                 && left.GetCity().Equals(right.GetCity()) 
-                && FormatState(left.GetState()).Equals(FormatState(right.GetState())) 
+                && left.GetState().Equals(right.GetState()) 
                 && left.GetZipCode().Equals(right.GetZipCode());
         }
 
@@ -47,53 +48,122 @@ namespace Donor
         private static string FormatAddress(string address)
         {
             address = address.ToLower();
-            if (address.Contains(" s "))
-                address = address.Replace(" s ", " s. ");
 
-            if (address.Contains(" e "))
-                address = address.Replace(" e ", " e. ");
-
-            if (address.Contains(" dr "))
-                address = address.Replace(" dr ", " dr. ");
-
-            if (address.Contains(" st "))
-                address = address.Replace(" st ", " st. ");
-
-            if (address.Contains(" lane "))
-                address = address.Replace(" lane ", " ln ");
+            foreach(string addyItem in GetEachAddressItem(address))
+            {
+                address = AbbreviatedStreetNames(addyItem) + " ";
+            }
 
             return FirstCharUpperCase(ref address);
         }
 
-        private static string FormatState(string state)
+        private static string AbbreviatedStreetNames(string streetName)
         {
-            state = state.ToLower();
-            state = state.Trim();
-            if (state.Contains("slc"))
-                state = state.Replace("slc", "salt lake city");
-            return FirstCharUpperCase(ref state);
+            if (streetName.Equals("DRIVE".ToLower()) || 
+                streetName.Equals("DRIV".ToLower()) || streetName.Equals("DRIV.".ToLower()) || 
+                streetName.Equals("DRV".ToLower()) || streetName.Equals("DRV.".ToLower()) ||
+                streetName.Equals("DR".ToLower()) || streetName.Equals("DR,".ToLower()))
+                streetName = "DR.".ToLower();
+
+            if (streetName.Equals("ST".ToLower()) || streetName.Equals("STREET".ToLower()) || 
+                streetName.Equals("STRT".ToLower()) || streetName.Equals("STRT.".ToLower()) || 
+                streetName.Equals("STR".ToLower()) || streetName.Equals("STR.".ToLower()))
+                streetName = "ST.".ToLower();
+
+            if (streetName.Equals("LN".ToLower()) || streetName.Equals("LANE".ToLower()))
+                streetName = "LN.".ToLower();
+
+            if (streetName.Equals("S".ToLower()) || streetName.Equals("S.".ToLower()))
+                streetName = "South".ToLower();
+
+            if (streetName.Equals("N".ToLower()) || streetName.Equals("N.".ToLower()))
+                streetName = "North".ToLower();
+
+            if (streetName.Equals("E".ToLower()) || streetName.Equals("E.".ToLower()))
+                streetName = "East".ToLower();
+
+            if (streetName.Equals("W".ToLower()) || streetName.Equals("W.".ToLower()))
+                streetName = "West".ToLower();
+
+            if (streetName.Equals("CIR".ToLower()) || streetName.Equals("CIR.".ToLower()) || 
+                streetName.Equals("CIRC".ToLower()) || streetName.Equals("CIRC.".ToLower()) || 
+                streetName.Equals("CIRCL".ToLower()) || streetName.Equals("CIRCL.".ToLower()) || 
+                streetName.Equals("CRCL".ToLower()) || streetName.Equals("CRCL.".ToLower()) || 
+                streetName.Equals("CRCLE".ToLower()) || streetName.Equals("CRCLE.".ToLower()) ||
+                streetName.Equals("CIRCLE".ToLower()))
+            {
+                streetName = "Cir.".ToLower();
+            }
+
+            if (streetName.Equals("RD".ToLower()) || streetName.Equals("ROAD".ToLower()))
+                streetName = "RD.".ToLower();
+
+            if (streetName.Equals("AV".ToLower()) || streetName.Equals("AV.".ToLower()) || 
+                streetName.Equals("AVEN".ToLower()) || streetName.Equals("AVEN.".ToLower()) ||
+                streetName.Equals("AVENU".ToLower()) || streetName.Equals("AVENU.".ToLower()) ||
+                streetName.Equals("AVN".ToLower()) || streetName.Equals("AVN.".ToLower()) || 
+                streetName.Equals("AVNUE".ToLower()) || streetName.Equals("AVNUE.".ToLower()) ||
+                streetName.Equals("AVENUE.".ToLower()))
+            {
+                streetName = "AVE.".ToLower();
+            }
+
+            if (streetName.Equals("CT".ToLower()) || streetName.Equals("COURT".ToLower()))
+                streetName = "CT.".ToLower();
+
+            if (streetName.Equals("Place".ToLower()) || streetName.Equals("PL".ToLower()))
+                streetName = "PL.".ToLower();
+
+            if (streetName.Equals("PKWY".ToLower()) || streetName.Equals("PKWY.".ToLower()) ||
+                streetName.Equals("PKWYS".ToLower()) || streetName.Equals("PKWYS.".ToLower()) ||
+                streetName.Equals("PARKWAYS".ToLower()))
+                streetName = "PKWY.".ToLower();
+
+            if (streetName.Equals("COVE".ToLower()) || streetName.Equals("COVE".ToLower()))
+                streetName = "CV.".ToLower();
+
+            return streetName;
+        }
+
+        private static string Seperte(string address)
+        {
+            string correctStreetName = "";
+            Regex re = new Regex(@"(?<=\\D)(?=\\d) | (?<=\\d)(?=\\D)");
+            foreach(string splitAddy in re.Split(address))
+            {
+                correctStreetName += splitAddy + " ";
+            }
+            return correctStreetName;
+        }
+
+        private static string FormatCity(string city)
+        {
+            city = city.ToLower();
+            if (city.Equals("slc"))
+                city = city.Replace("slc", "salt lake city");
+            return FirstCharUpperCase(ref city);
         }
 
         private static string FirstCharUpperCase(ref string address)
         {
-            char[] eachCharArr;
-            string eachString;
-            string[] arr = new string[] { "" };
-            arr = address.Split(' ');
-            for (int i = 0; i < arr.Length; i++)
+            string eachString = "";
+
+            foreach(string strAddy in GetEachAddressItem(address))
             {
-                eachString = arr[i].ToString();
-                eachCharArr = eachString.ToCharArray();
-
-                if (int.TryParse(eachCharArr[0].ToString(), out int result))
-                    continue;
-
-                eachString = char.ToUpper(eachCharArr[0]).ToString();
-
-                arr[i] = eachString;
+                eachString = char.ToUpper(strAddy[0]) + strAddy.Substring(1);
             }
 
-            return arr.ToString();
+            return eachString;
+        }
+
+        private static IEnumerable<string> GetEachAddressItem(string address)
+        {
+            string[] arr = address.Split(' ');
+            foreach(string addressItem in arr)
+            {
+                yield return addressItem;
+            }
+
         }
 
         public string GetAccountNumber()
@@ -113,7 +183,8 @@ namespace Donor
 
         public string GetAddress()
         {
-            return billingAddress.CityAddress;
+            string addy = Seperte(billingAddress.CityAddress);
+            return addy.Replace("\n", "").Replace("\r", "");
         }
 
         public string GetState()
