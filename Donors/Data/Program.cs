@@ -41,17 +41,39 @@ namespace Donor
             //        + "\nMini-Campaign:\t" + name.MiniCampaign + "\nFund:\t" + name.Fund + "\nType:\t" + name.TransactionType + "\nMethod:\t" + name.TransactionMethod
             //        + "\nAmount:\t" + name.DonationAmount + "\n\r\n\r");
             //}
-            string addy = "1723 s 2000 E. Sandy";
-            Console.WriteLine(addy);
 
-            addy = addy.ToLower();
-            Console.WriteLine(addy);
+            string[] addyArr = new string[] {"10876 S River Front Parkway, Suite 400",
+                                                "3535 South State Street",
+                                                "1473 N Foresto Bello Way",
+                                                "5729 W Yukon Park Lane",
+                                                "unknown",
+                                                "13968 S Hawberry Rd",
+                                                "1835 Lakeline Dr",
+                                                "11633 S Grandville Ave",
+                                                "2500 So. State St.",
+                                                "8858 W Amtrac Ln",
+                                                "4249 Chestnut Oak Dr.",
+                                                "3058 S. Crescent Dr",
+                                                "3058 S. Crescent Dr",
+                                                "4472 West 4600 South",
+                                                "1356 N 1800 W",
+                                                "1929 S 925 W",
+                                                "4650 South Idlewild Rd",
+                                                "6078 Bona Dea Blvd"
+            };
 
-            if (addy.Contains(" s "))
+            for (int i = 0; i < addyArr.Length; i++)
             {
-                addy = addy.Replace(" s ", " S. ");
+                constituents.Add(new Constituents(i.ToString(), "eman low", "low", "eman", addyArr[i], "SLC", "UT", "84108", "801558137" + i.ToString(), "lemmanuel@yahoo.com", "individual"));
+
             }
-            Console.WriteLine(addy);
+
+            //constituents.Add(new Constituents("1", "eman low", "low", "eman", "2500 So. State St.", "SLC", "UT", "84108", "8015581375", "lemmanuel@yahoo.com", "individual"));
+
+            foreach (Constituents person in constituents)
+            {
+                Console.WriteLine(person.GetAddress());
+            }
 
 
 

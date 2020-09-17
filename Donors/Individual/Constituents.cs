@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace Donor
@@ -33,7 +34,7 @@ namespace Donor
             if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
                 return false;
             return FormatAddress(left.GetAddress()).Equals(FormatAddress(right.GetAddress())) 
-                && left.GetCity().Equals(right.GetCity()) 
+                && FormatCity(left.GetCity()).Equals(FormatCity(right.GetCity())) 
                 && left.GetState().Equals(right.GetState()) 
                 && left.GetZipCode().Equals(right.GetZipCode());
         }
@@ -48,13 +49,15 @@ namespace Donor
         private static string FormatAddress(string address)
         {
             address = address.ToLower();
-
+            string result = "";
             foreach(string addyItem in GetEachAddressItem(address))
             {
-                address = AbbreviatedStreetNames(addyItem) + " ";
+                result += AbbreviatedStreetNames(addyItem) + " ";
             }
 
-            return FirstCharUpperCase(ref address);
+            result = result.Trim();
+
+            return FirstCharUpperCase(ref result);
         }
 
         private static string AbbreviatedStreetNames(string streetName)
@@ -73,7 +76,7 @@ namespace Donor
             if (streetName.Equals("LN".ToLower()) || streetName.Equals("LANE".ToLower()))
                 streetName = "LN.".ToLower();
 
-            if (streetName.Equals("S".ToLower()) || streetName.Equals("S.".ToLower()))
+            if (streetName.Equals("S".ToLower()) || streetName.Equals("S.".ToLower()) || streetName.Equals("SO.".ToLower()))
                 streetName = "South".ToLower();
 
             if (streetName.Equals("N".ToLower()) || streetName.Equals("N.".ToLower()))
@@ -125,17 +128,22 @@ namespace Donor
             return streetName;
         }
 
-        private static string Seperte(string address)
+        private static IEnumerable<string> Seperte(string address)
         {
-            string correctStreetName = "";
-            Regex re = new Regex(@"(?<=\\D)(?=\\d) | (?<=\\d)(?=\\D)");
-            foreach(string splitAddy in re.Split(address))
-            {
-                correctStreetName += splitAddy + " ";
-            }
-            return correctStreetName;
-        }
 
+            var words = new List<string> { string.Empty };
+            for (var i = 0; i < address.Length; i++)
+            {
+                words[words.Count - 1] += address[i];
+                if (i + 1 < address.Length && char.IsLetter(address[i]) != char.IsLetter(address[i + 1]))
+                {
+                    words.Add(string.Empty);
+                }
+            }
+            return words;
+
+        }
+         
         private static string FormatCity(string city)
         {
             city = city.ToLower();
@@ -147,13 +155,13 @@ namespace Donor
         private static string FirstCharUpperCase(ref string address)
         {
             string eachString = "";
-
-            foreach(string strAddy in GetEachAddressItem(address))
+            string[] addyArr = address.Split(' ');
+            foreach(string strAddy in addyArr)
             {
-                eachString = char.ToUpper(strAddy[0]) + strAddy.Substring(1);
+                eachString += " " + char.ToUpper(strAddy[0]) + strAddy.Substring(1);
             }
 
-            return eachString;
+            return eachString.Trim();
         }
 
         private static IEnumerable<string> GetEachAddressItem(string address)
@@ -161,6 +169,16 @@ namespace Donor
             string[] arr = address.Split(' ');
             foreach(string addressItem in arr)
             {
+                //If an address has the number and name stuck together, seperate them
+                char[] itemChar = addressItem.ToCharArray();
+                if (itemChar.HasBothIntChar())
+                {
+                    foreach (string seperateVale in Seperte(addressItem))
+                    {
+                        yield return seperateVale;
+                    }
+                }
+                
                 yield return addressItem;
             }
 
@@ -183,7 +201,7 @@ namespace Donor
 
         public string GetAddress()
         {
-            string addy = Seperte(billingAddress.CityAddress);
+            string addy = FormatAddress(billingAddress.CityAddress);
             return addy.Replace("\n", "").Replace("\r", "");
         }
 
@@ -281,5 +299,25 @@ namespace Donor
         public string Fund { set; get; }
         public string TransactionType { set; get; }
         public string TransactionMethod { set; get; }
+    }
+
+    public static class MyExtensions
+    {
+        public static bool HasBothIntChar(this char[] arr)
+        {
+            bool intItem = false;
+            bool charItem = false;
+
+            foreach(char item in arr)
+            {
+                if (int.TryParse(item.ToString(), out int holder))
+                    intItem = true;
+
+                if (!int.TryParse(item.ToString(), out int holder2))
+                    charItem = true;
+            }
+
+            return intItem && charItem;
+        }
     }
 }
