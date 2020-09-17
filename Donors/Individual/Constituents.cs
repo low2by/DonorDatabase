@@ -106,7 +106,7 @@ namespace Donor
                 streetName.Equals("AVENU".ToLower()) || streetName.Equals("AVENU.".ToLower()) ||
                 streetName.Equals("AVN".ToLower()) || streetName.Equals("AVN.".ToLower()) || 
                 streetName.Equals("AVNUE".ToLower()) || streetName.Equals("AVNUE.".ToLower()) ||
-                streetName.Equals("AVENUE.".ToLower()))
+                streetName.Equals("AVENUE.".ToLower()) || streetName.Equals("AVE".ToLower()))
             {
                 streetName = "AVE.".ToLower();
             }
