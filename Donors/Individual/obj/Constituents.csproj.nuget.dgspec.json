@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj": {}
+    "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj": {}
   },
   "projects": {
-    "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj": {
+    "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
+        "projectUniqueName": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
         "projectName": "Constituents",
-        "projectPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
+        "projectPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Individual\\Constituents.csproj",
         "packagesPath": "C:\\Users\\elotubai10\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Individual\\obj\\",
+        "outputPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Individual\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\elotubai10\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -27,8 +27,8 @@
         "frameworks": {
           "netstandard2.0": {
             "projectReferences": {
-              "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj": {
-                "projectPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj"
+              "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj": {
+                "projectPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj"
               }
             }
           }
@@ -63,14 +63,14 @@
         }
       }
     },
-    "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj": {
+    "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj",
+        "projectUniqueName": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj",
         "projectName": "Transactions",
-        "projectPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj",
+        "projectPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Transactions\\Transactions.csproj",
         "packagesPath": "C:\\Users\\elotubai10\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\elotubai10\\source\\repos\\DonorDatabase\\Donors\\Transactions\\obj\\",
+        "outputPath": "C:\\Users\\elotubai10\\Source\\Repos\\DonorDatabase\\Donors\\Transactions\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\elotubai10\\AppData\\Roaming\\NuGet\\NuGet.Config",
