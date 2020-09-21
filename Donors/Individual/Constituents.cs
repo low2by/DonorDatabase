@@ -39,12 +39,7 @@ namespace Donor
                 && left.GetZipCode().Equals(right.GetZipCode());
         }
 
-        public bool HaveSameLastName(Constituents left, Constituents right)
-        {
-            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
-                return false;
-            return left.GetLastName().Contains(right.GetLastName());
-        }
+       
 
         private static string FormatAddress(string address)
         {
@@ -52,6 +47,7 @@ namespace Donor
             string result = "";
             foreach(string addyItem in GetEachAddressItem(address))
             {
+
                 result += AbbreviatedStreetNames(addyItem) + " ";
             }
 
@@ -76,7 +72,7 @@ namespace Donor
             if (streetName.Equals("LN".ToLower()) || streetName.Equals("LANE".ToLower()))
                 streetName = "LN.".ToLower();
 
-            if (streetName.Equals("S".ToLower()) || streetName.Equals("S.".ToLower()) || streetName.Equals("SO.".ToLower()))
+            if (streetName.Equals("S".ToLower()) || streetName.Equals("S.".ToLower()) || streetName.Equals("SO.".ToLower()) || streetName.Equals("SO".ToLower()))
                 streetName = "South".ToLower();
 
             if (streetName.Equals("N".ToLower()) || streetName.Equals("N.".ToLower()))
@@ -124,6 +120,9 @@ namespace Donor
 
             if (streetName.Equals("COVE".ToLower()) || streetName.Equals("COVE".ToLower()))
                 streetName = "CV.".ToLower();
+
+            if (streetName.Equals("BLVD".ToLower()) || streetName.Equals("BOUL".ToLower()) || streetName.Equals("BOULEVARD".ToLower()) || streetName.Equals("BOULV".ToLower()))
+                streetName = "BLVD.".ToLower();
 
             return streetName;
         }
@@ -178,15 +177,20 @@ namespace Donor
                         yield return seperateVale;
                     }
                 }
+                else
+                {
+                    yield return addressItem;
+                }
                 
-                yield return addressItem;
+                //
             }
 
         }
 
-        public string GetAccountNumber()
+        public int GetAccountNumber()
         {
-            return accountNumber;
+            int.TryParse(accountNumber, out int result);
+            return result;
         }
 
         public string GetName()
@@ -318,6 +322,52 @@ namespace Donor
             }
 
             return intItem && charItem;
+        }
+
+        public static Dictionary<int, IEnumerable<Constituents>> HaveSameLastName(this IEnumerable<Constituents> constituents)
+        {
+            Dictionary<int, IEnumerable<Constituents>> matchingLastnames = new Dictionary<int, IEnumerable<Constituents>>();
+            foreach (Constituents person in constituents)
+            {
+                List<Constituents> listOfMathcingLastName = new List<Constituents>();
+
+                foreach (Constituents listConstituents in constituents)
+                {
+                    if (person.GetAccountNumber() == listConstituents.GetAccountNumber())
+                        continue;
+
+                    if (person.GetLastName().Contains(listConstituents.GetLastName()))
+                        listOfMathcingLastName.Add(listConstituents);
+                }
+
+                matchingLastnames.Add(person.GetAccountNumber(), listOfMathcingLastName);
+
+            }
+
+            return matchingLastnames;
+        }
+
+        public static Dictionary<int, IEnumerable<Constituents>> HaveSameAddress(this IEnumerable<Constituents> constituents)
+        {
+            Dictionary<int, IEnumerable<Constituents>> matchingLastnames = new Dictionary<int, IEnumerable<Constituents>>();
+            foreach (Constituents person in constituents)
+            {
+                List<Constituents> listOfMathcingLastName = new List<Constituents>();
+
+                foreach (Constituents listConstituents in constituents)
+                {
+                    if (person.GetAccountNumber() == listConstituents.GetAccountNumber())
+                        continue;
+
+                    if (person.GetAddress().Equals(listConstituents.GetAddress()))
+                        listOfMathcingLastName.Add(listConstituents);
+                }
+
+                matchingLastnames.Add(person.GetAccountNumber(), listOfMathcingLastName);
+
+            }
+
+            return matchingLastnames;
         }
     }
 }

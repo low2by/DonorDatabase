@@ -42,37 +42,18 @@ namespace Donor
             //        + "\nAmount:\t" + name.DonationAmount + "\n\r\n\r");
             //}
 
-            string[] addyArr = new string[] {"10876 S River Front Parkway, Suite 400",
-                                                "3535 South State Street",
-                                                "1473 N Foresto Bello Way",
-                                                "5729 W Yukon Park Lane",
-                                                "unknown",
-                                                "13968 S Hawberry Rd",
-                                                "1835 Lakeline Dr",
-                                                "11633 S Grandville Ave",
-                                                "2500 So. State St.",
-                                                "8858 W Amtrac Ln",
-                                                "4249 Chestnut Oak Dr.",
-                                                "3058 S. Crescent Dr",
-                                                "3058 S. Crescent Dr",
-                                                "4472 West 4600 South",
-                                                "1356 N 1800 W",
-                                                "1929 S 925 W",
-                                                "4650 South Idlewild Rd",
-                                                "6078 Bona Dea Blvd"
-            };
+            constituents.Add(new Constituents("1", "eman low", "low", "eman", "2500 So. State St.", "SLC", "UT", "84108", "8015581375", "lemmanuel@yahoo.com", "individual"));
+            constituents.Add(new Constituents("2", "jane low", "low", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
+            constituents.Add(new Constituents("3", "jane lok", "lok", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
+            constituents.Add(new Constituents("4", "jane loa", "loa", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
 
-            for (int i = 0; i < addyArr.Length; i++)
-            {
-                constituents.Add(new Constituents(i.ToString(), "eman low", "low", "eman", addyArr[i], "SLC", "UT", "84108", "801558137" + i.ToString(), "lemmanuel@yahoo.com", "individual"));
 
-            }
 
-            //constituents.Add(new Constituents("1", "eman low", "low", "eman", "2500 So. State St.", "SLC", "UT", "84108", "8015581375", "lemmanuel@yahoo.com", "individual"));
+            Dictionary<int, IEnumerable<Constituents>> listofMatchingAddress = constituents.HaveSameAddress();
 
             foreach (Constituents person in constituents)
             {
-                Console.WriteLine(person.GetAddress());
+                Console.WriteLine(person.GetName() + " has " + listofMatchingAddress[person.GetAccountNumber()].Count() + " with the same last name:");
             }
 
 
@@ -94,9 +75,6 @@ namespace Donor
 
             //this is for testing. delete leter
             rowCount = 5;
-            //colCount = 1;
-
-            string cellString;
 
 
             //iterate over the rows and columns and print to the console as it appears in the file
@@ -109,7 +87,7 @@ namespace Donor
                     continue;
                 }
 
-                if(headerTransaction.AmountColNum == 0)
+                if (headerTransaction.AmountColNum == 0)
                 {
                     //Console.WriteLine("Setting the constituents\n\r\n\r");
                     SetIndividualConstituentsFields(ref i, ref xlRange);
@@ -122,43 +100,6 @@ namespace Donor
                     //Console.WriteLine("Setting the transaction\n\r\n\r");
                     SetTransactions(ref i, ref xlRange);
                 }
-                
-
-                //for (int j = 1; j <= colCount; j++)
-                //{
-                //    //if (i == 1)
-                //    //    GetHeader(ref colCount, ref xlRange, ref i);
-
-                //    //SetIndividualConstituentsFields(ref i, ref xlRange);
-                //    //write the value to the console
-                //    if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
-                //    {
-                //        if(j == headerTransaction.DateColNum)
-                //        {
-                //            cellString = xlRange.Cells[i, j].Value2.ToString();
-                //            cellString = cellString.Replace("\n", "").Replace("\r", "");
-                //        }
-                //        else
-                //        {
-                //            cellString = xlRange.Cells[i, j].Value2.ToString();
-                //            cellString = cellString.Replace("\n", "").Replace("\r", "");
-                //        }
-                        
-                //        //indivConstituents.Add(new Individual())
-                //    }
-                //    else
-                //    {
-                //        cellString = "";
-
-                //    }
-
-                //    //Console.Write(cellString + "\t");
-
-
-
-                //}
-                //Console.Write("\r\n\r\n");
-                //Console.Write(header.FirstNameColNum.ToString() + "\r\n\r\n"); //for test, delete later
             }
             //cleanup
             GC.Collect();
@@ -181,21 +122,26 @@ namespace Donor
             Marshal.ReleaseComObject(xlApp);
         }
 
+        public void WriteSample()
+        {
+
+        }
+
         private static void SetIndividualConstituentsFields(ref int i, ref Excel.Range xlRange)
         {
-            constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum), 
-                GetFieldValue(ref i, ref xlRange, headerConstituents.NameColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.LastNameColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.FirstNameColNum), 
+            constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum),
+                GetFieldValue(ref i, ref xlRange, headerConstituents.NameColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.LastNameColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.FirstNameColNum),
                 GetFieldValue(ref i, ref xlRange, headerConstituents.CityAddressColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.CityColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.StateColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.ZipCodeColNum),
                 GetFieldValue(ref i, ref xlRange, headerConstituents.PhoneColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.EmailColNum),
                 GetFieldValue(ref i, ref xlRange, headerConstituents.TypeColNum)));
 
-           
+
         }
 
         private static void SetTransactions(ref int i, ref Excel.Range xlRange)
         {
             //do this so we can begin the row at 3
-            transactions.Add(new Transaction(GetFieldValue(ref i, ref xlRange, headerTransaction.AccountNumberColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.NameColNum), 
+            transactions.Add(new Transaction(GetFieldValue(ref i, ref xlRange, headerTransaction.AccountNumberColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.NameColNum),
                 GetFieldValue(ref i, ref xlRange, headerTransaction.DateColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.CampaignColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.MiniCampaignColNum),
                  GetFieldValue(ref i, ref xlRange, headerTransaction.FundColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.TypeColNum), GetFieldValue(ref i, ref xlRange, headerTransaction.MethodColNum),
                   GetFieldValue(ref i, ref xlRange, headerTransaction.AmountColNum)));
@@ -221,7 +167,7 @@ namespace Donor
                 else
                 {
                     name = xlRange.Cells[i, colNum].Value2.ToString();
-                    
+
                 }
 
             }
@@ -358,7 +304,7 @@ namespace Donor
                 headerTransaction.AccountNumberColNum = j;
             }
 
-            
+
 
         }
 
