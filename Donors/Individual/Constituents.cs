@@ -8,7 +8,7 @@ namespace Donor
 {
     public class Constituents
     {
-        private List<Donation> transactions;
+        private List<Transaction> transactions;
         private ContactInformation contactInformation;
         private BillingAddress billingAddress;
         private string accountNumber;
@@ -21,13 +21,10 @@ namespace Donor
             this.typeOfConstituent = _type;
             this.contactInformation = new ContactInformation(_name, _lastName, _firstName, _email, _phoneNumber);
             this.billingAddress = new BillingAddress( _address, _city, _state, _zipCode);
-            this.transactions = new List<Donation>();
+            this.transactions = new List<Transaction>();
         }
 
-        public void AddTransaction(Transaction donation)
-        {
-            transactions.Add(new Donation(donation.DonationDate, donation.Campaign, donation.MiniCampaign, donation.Fund, donation.TransactionType, donation.TransactionMethod, donation.DonationAmount));
-        }
+        
 
         public bool IsMatchingAddress(Constituents left, Constituents right)
         {
@@ -145,7 +142,7 @@ namespace Donor
          
         private static string FormatCity(string city)
         {
-            city = city.ToLower();
+            city = city.ToLower().Trim();
             if (city.Equals("slc"))
                 city = city.Replace("slc", "salt lake city");
             return FirstCharUpperCase(ref city);
@@ -182,9 +179,18 @@ namespace Donor
                     yield return addressItem;
                 }
                 
-                //
             }
 
+        }
+
+        public void AddTransaction(Transaction incomingTran)
+        {
+            transactions.Add(incomingTran);
+        }
+
+        public List<Transaction> GetTransactions()
+        {
+            return transactions;
         }
 
         public int GetAccountNumber()
@@ -282,29 +288,6 @@ namespace Donor
         public string ZipCode { set; get; }
     }
 
-    public struct Donation
-    {
-        public Donation(string _donationDate, string _campaign, string _miniCampaign, string _fund, string _type, string _method, string _donationAmount)
-        {
-            DonationDate = _donationDate;
-            DonationAmount = _donationAmount;
-            Campaign = _campaign;
-            MiniCampaign = _miniCampaign;
-            Fund = _fund;
-            TransactionType = _type;
-            TransactionMethod = _method;
-
-        }
-
-        public string DonationDate { set; get; }
-        public string DonationAmount { set; get; }
-        public string Campaign { set; get; }
-        public string MiniCampaign { set; get; }
-        public string Fund { set; get; }
-        public string TransactionType { set; get; }
-        public string TransactionMethod { set; get; }
-    }
-
     public static class MyExtensions
     {
         public static bool HasBothIntChar(this char[] arr)
@@ -368,6 +351,40 @@ namespace Donor
             }
 
             return matchingLastnames;
+        }
+
+        public static Dictionary<int, Constituents> GetConstituentDictionary(this IEnumerable<Constituents> constituents)
+        {
+            Dictionary<int, Constituents> constituentsDictionary = new Dictionary<int, Constituents>();
+
+            foreach (Constituents person in constituents)
+            {
+                constituentsDictionary.Add(person.GetAccountNumber(), person);
+            }
+
+            return constituentsDictionary;
+        }
+
+        public static Dictionary<int, Constituents> AddTransaction(this IEnumerable<Constituents> constituents, IEnumerable<Transaction>  donation)
+        {
+            Dictionary<int, Constituents> cons = constituents.GetConstituentDictionary();
+            List<Transaction> listTran;
+
+            foreach(Transaction trans in donation)
+            {
+                if (cons.ContainsKey(trans.GetAccountNumber()))
+                {
+                    listTran = cons[trans.GetAccountNumber()].GetTransactions();
+
+                    foreach(Transaction consTran in listTran)
+                    {
+                        if (!consTran.TransactionsMatch(trans))
+                            cons[trans.GetAccountNumber()].AddTransaction(trans);
+                    }
+                }
+            }
+
+            return cons;
         }
     }
 }

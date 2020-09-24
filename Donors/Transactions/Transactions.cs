@@ -21,8 +21,13 @@ namespace Donor
 
         }
 
-        public string GetAccountNumber { get => accountNumber; private set { } }
-        public string GetName { get => name; private set { } }
+        //public int GetAccountNumber { get => accountNumber; private set { } }
+        public int GetAccountNumber()
+        {
+            int.TryParse(accountNumber, out int result);
+            return result;
+        }
+        public string GetName { get => name.Trim(); private set { } }
         public string DonationDate { set; get; }
         public string DonationAmount { set; get; }
         public string Campaign { set; get; }
@@ -30,5 +35,24 @@ namespace Donor
         public string Fund { set; get; }
         public string TransactionType { set; get; }
         public string TransactionMethod { set; get; }
+    }
+
+    public static class MyExtensions
+    {
+        public static bool TransactionsMatch(this Transaction donation, Transaction incomingDonation)
+        {
+            if (donation.DonationDate.Trim().Equals(incomingDonation.DonationDate.Trim()) && 
+                donation.Campaign.Trim().Equals(incomingDonation.Campaign.Trim()) &&
+                donation.MiniCampaign.Trim().Equals(incomingDonation.MiniCampaign.Trim()) &&
+                donation.Fund.Trim().Equals(incomingDonation.Fund.Trim()) &&
+                donation.TransactionType.Trim().Equals(incomingDonation.TransactionType.Trim()) &&
+                donation.TransactionMethod.Trim().Equals(incomingDonation.TransactionMethod.Trim()) &&
+                donation.DonationAmount.Trim().Equals(incomingDonation.DonationAmount.Trim())
+                )
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

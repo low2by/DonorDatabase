@@ -51,6 +51,8 @@ namespace Donor
 
             Dictionary<int, IEnumerable<Constituents>> listofMatchingAddress = constituents.HaveSameAddress();
 
+            constituents.AddTransaction(transactions);
+
             foreach (Constituents person in constituents)
             {
                 Console.WriteLine(person.GetName() + " has " + listofMatchingAddress[person.GetAccountNumber()].Count() + " with the same last name:");
@@ -135,8 +137,9 @@ namespace Donor
                 GetFieldValue(ref i, ref xlRange, headerConstituents.PhoneColNum), GetFieldValue(ref i, ref xlRange, headerConstituents.EmailColNum),
                 GetFieldValue(ref i, ref xlRange, headerConstituents.TypeColNum)));
 
-
         }
+
+
 
         private static void SetTransactions(ref int i, ref Excel.Range xlRange)
         {
