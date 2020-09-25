@@ -24,7 +24,15 @@ namespace Donor
             this.transactions = new List<Transaction>();
         }
 
-        
+        public Constituents(string _accountNumber, string _name, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type)
+        {
+            this.accountNumber = _accountNumber;
+            this.typeOfConstituent = _type;
+
+            this.contactInformation = new ContactInformation(_name, _email, _phoneNumber);
+            this.billingAddress = new BillingAddress(_address, _city, _state, _zipCode);
+            this.transactions = new List<Transaction>();
+        }
 
         public bool IsMatchingAddress(Constituents left, Constituents right)
         {
@@ -193,15 +201,14 @@ namespace Donor
             return transactions;
         }
 
-        public int GetAccountNumber()
+        public string GetAccountNumber()
         {
-            int.TryParse(accountNumber, out int result);
-            return result;
+            return accountNumber;
         }
 
         public string GetName()
         {
-            return contactInformation.LastName + ", " + contactInformation.FirstName;
+            return contactInformation.LastName() + ", " + contactInformation.FirstName();
         }
 
         public string GetTypeOfConstituent()
@@ -232,22 +239,22 @@ namespace Donor
 
         public string GetLastName()
         {
-            return contactInformation.LastName;
+            return contactInformation.LastName();
         }
 
         public string GetFirstName()
         {
-            return contactInformation.FirstName;
+            return contactInformation.FirstName();
         }
 
         public string GetEmail()
         {
-            return contactInformation.Email;
+            return contactInformation.Email();
         }
 
         public string GetPhoneNumber()
         {
-            return contactInformation.PhoneNumber;
+            return contactInformation.PhoneNumber();
         }
 
     }
@@ -256,20 +263,49 @@ namespace Donor
 
     public struct ContactInformation
     {
+        string name;
+        string lastName;
+        string firstName;
+        string email;
+        string phoneNumber;
         public ContactInformation(string _name, string _lastName, string _firstName, string _email, string _phoneNumber)
         {
-            Name = _name;
-            LastName = _lastName;
-            FirstName = _firstName;
-            Email = _email;
-            PhoneNumber = _phoneNumber;
+            name = _name;
+            lastName = _lastName;
+            firstName = _firstName;
+            email = _email;
+            phoneNumber = _phoneNumber;
         }
 
-        public string Name { get; set; }
-        public string LastName { set; get; }
-        public string FirstName { set; get; }
-        public string Email { set; get; }
-        public string PhoneNumber { set; get; }
+        public ContactInformation(string _name, string _email, string _phoneNumber)
+        {
+            name = _name;
+            email = _email;
+            phoneNumber = _phoneNumber;
+
+            lastName = "";
+            firstName = "";
+        }
+
+        public string Name()
+        {
+            return name;
+        }
+        public string LastName() 
+        {
+            return lastName;
+        }
+        public string FirstName()
+        {
+            return firstName;
+        }
+        public string Email()
+        {
+            return email;
+        }
+        public string PhoneNumber(){
+            return phoneNumber; 
+        }
     }
 
     public struct BillingAddress
@@ -307,16 +343,16 @@ namespace Donor
             return intItem && charItem;
         }
 
-        public static Dictionary<int, IEnumerable<Constituents>> HaveSameLastName(this IEnumerable<Constituents> constituents)
+        public static Dictionary<string, IEnumerable<Constituents>> HaveSameLastName<T>(this IEnumerable<Constituents> constituents)
         {
-            Dictionary<int, IEnumerable<Constituents>> matchingLastnames = new Dictionary<int, IEnumerable<Constituents>>();
+            Dictionary<string, IEnumerable<Constituents>> matchingLastnames = new Dictionary<string, IEnumerable<Constituents>>();
             foreach (Constituents person in constituents)
             {
                 List<Constituents> listOfMathcingLastName = new List<Constituents>();
 
                 foreach (Constituents listConstituents in constituents)
                 {
-                    if (person.GetAccountNumber() == listConstituents.GetAccountNumber())
+                    if (person.GetAccountNumber().Equals(listConstituents.GetAccountNumber()))
                         continue;
 
                     if (person.GetLastName().Contains(listConstituents.GetLastName()))
@@ -330,16 +366,16 @@ namespace Donor
             return matchingLastnames;
         }
 
-        public static Dictionary<int, IEnumerable<Constituents>> HaveSameAddress(this IEnumerable<Constituents> constituents)
+        public static Dictionary<string, IEnumerable<Constituents>> HaveSameAddress(this IEnumerable<Constituents> constituents)
         {
-            Dictionary<int, IEnumerable<Constituents>> matchingLastnames = new Dictionary<int, IEnumerable<Constituents>>();
+            Dictionary<string, IEnumerable<Constituents>> matchingLastnames = new Dictionary<string, IEnumerable<Constituents>>();
             foreach (Constituents person in constituents)
             {
                 List<Constituents> listOfMathcingLastName = new List<Constituents>();
 
                 foreach (Constituents listConstituents in constituents)
                 {
-                    if (person.GetAccountNumber() == listConstituents.GetAccountNumber())
+                    if (person.GetAccountNumber().Equals(listConstituents.GetAccountNumber()))
                         continue;
 
                     if (person.GetAddress().Equals(listConstituents.GetAddress()))
@@ -353,9 +389,9 @@ namespace Donor
             return matchingLastnames;
         }
 
-        public static Dictionary<int, Constituents> GetConstituentDictionary(this IEnumerable<Constituents> constituents)
+        public static Dictionary<string, Constituents> GetConstituentDictionary(this IEnumerable<Constituents> constituents)
         {
-            Dictionary<int, Constituents> constituentsDictionary = new Dictionary<int, Constituents>();
+            Dictionary<string, Constituents> constituentsDictionary = new Dictionary<string, Constituents>();
 
             foreach (Constituents person in constituents)
             {
@@ -365,9 +401,9 @@ namespace Donor
             return constituentsDictionary;
         }
 
-        public static Dictionary<int, Constituents> AddTransaction(this IEnumerable<Constituents> constituents, IEnumerable<Transaction>  donation)
+        public static Dictionary<string, Constituents> AddTransaction(this IEnumerable<Constituents> constituents, IEnumerable<Transaction>  donation)
         {
-            Dictionary<int, Constituents> cons = constituents.GetConstituentDictionary();
+            Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
             List<Transaction> listTran;
 
             foreach(Transaction trans in donation)

@@ -22,10 +22,9 @@ namespace Donor
         }
 
         //public int GetAccountNumber { get => accountNumber; private set { } }
-        public int GetAccountNumber()
+        public string GetAccountNumber()
         {
-            int.TryParse(accountNumber, out int result);
-            return result;
+            return accountNumber;
         }
         public string GetName { get => name.Trim(); private set { } }
         public string DonationDate { set; get; }

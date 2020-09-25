@@ -16,12 +16,15 @@ namespace Donor
         //Individual constituent;
         private static BloomerangColumnHeaderConstituents headerConstituents;
         private static BloomerangColumnHeaderTransaction headerTransaction;
+        private static CharityproudHeaderConstituents headerCharityproud;
         private static List<Constituents> constituents;
         private static List<Transaction> transactions;
+
         static void Main(string[] args)
         {
             headerConstituents = new BloomerangColumnHeaderConstituents();
             headerTransaction = new BloomerangColumnHeaderTransaction();
+            headerCharityproud = new CharityproudHeaderConstituents();
             constituents = new List<Constituents>();
             transactions = new List<Transaction>();
             GetExcelFile();
@@ -42,23 +45,34 @@ namespace Donor
             //        + "\nAmount:\t" + name.DonationAmount + "\n\r\n\r");
             //}
 
-            constituents.Add(new Constituents("1", "eman low", "low", "eman", "2500 So. State St.", "SLC", "UT", "84108", "8015581375", "lemmanuel@yahoo.com", "individual"));
-            constituents.Add(new Constituents("2", "jane low", "low", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
-            constituents.Add(new Constituents("3", "jane lok", "lok", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
-            constituents.Add(new Constituents("4", "jane loa", "loa", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
+            //constituents.Add(new Constituents("1", "eman low", "low", "eman", "2500 So. State St.", "SLC", "UT", "84108", "8015581375", "lemmanuel@yahoo.com", "individual"));
+            //constituents.Add(new Constituents("2", "jane low", "low", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
+            //constituents.Add(new Constituents("3", "jane lok", "lok", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
+            //constituents.Add(new Constituents("4", "jane loa", "loa", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
 
 
 
-            Dictionary<int, IEnumerable<Constituents>> listofMatchingAddress = constituents.HaveSameAddress();
+            //Dictionary<int, IEnumerable<Constituents>> listofMatchingAddress = constituents.HaveSameAddress();
 
-            constituents.AddTransaction(transactions);
+            //constituents.AddTransaction(transactions);
 
-            foreach (Constituents person in constituents)
+            //foreach (Constituents person in constituents)
+            //{
+            //    Console.WriteLine(person.GetName() + " has " + listofMatchingAddress[person.GetAccountNumber()].Count() + " with the same last name:");
+            //}
+
+            Dictionary<string, Constituents> consTrans = constituents.AddTransaction(transactions);
+
+            foreach (KeyValuePair<string, Constituents> person in consTrans)
             {
-                Console.WriteLine(person.GetName() + " has " + listofMatchingAddress[person.GetAccountNumber()].Count() + " with the same last name:");
+                //person.Value
+                //    Console.WriteLine("Name:\t"+name.GetName()+"\nType:\t"+name.GetTypeOfConstituent()+"\nAccount:\t"+name.GetAccountNumber() 
+                //        + "\nStreet:\t"+name.GetAddress() +"\nCity:\t"+name.GetCity()+"\nState:\t"+name.GetState() + "\nZip Code:\t" + name.GetZipCode()
+                //        + "\nEmail:\t"+ name.GetEmail()+ "\nPhone Number:\t"+name.GetPhoneNumber()+"\n\r\n\r");
+                //    Console.WriteLine("Name:\t" + name.GetName + "\nAccount:\t"+name.GetAccountNumber+ "\nDate:\t" + name.DonationDate + "\nCampaign:\t" + name.Campaign
+                //        + "\nMini-Campaign:\t" + name.MiniCampaign + "\nFund:\t" + name.Fund + "\nType:\t" + name.TransactionType + "\nMethod:\t" + name.TransactionMethod
+                //        + "\nAmount:\t" + name.DonationAmount + "\n\r\n\r");
             }
-
-
 
             Console.Read();
         }
@@ -102,6 +116,12 @@ namespace Donor
                     //Console.WriteLine("Setting the transaction\n\r\n\r");
                     SetTransactions(ref i, ref xlRange);
                 }
+
+                if(headerCharityproud.EmailColNum != 0 && headerCharityproud.FundColNum != 0)
+                {
+                    SetCharityConstituentsTransaction(ref i, ref xlRange);
+                }
+
             }
             //cleanup
             GC.Collect();
@@ -139,7 +159,19 @@ namespace Donor
 
         }
 
+        private static void SetCharityConstituentsTransaction(ref int i, ref Excel.Range xlRange)
+        {
+            constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum),
+               GetFieldValue(ref i, ref xlRange, headerCharityproud.NameColNum),
+               GetFieldValue(ref i, ref xlRange, headerCharityproud.CityColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.CityColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.StateColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.ZipCodeColNum),
+               GetFieldValue(ref i, ref xlRange, headerCharityproud.PhoneColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.EmailColNum),
+               GetFieldValue(ref i, ref xlRange, headerCharityproud.TypeColNum)));
 
+            transactions.Add(new Transaction(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.NameColNum),
+                GetFieldValue(ref i, ref xlRange, headerCharityproud.DateColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.CampaignColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.MiniCampaignColNum),
+                 GetFieldValue(ref i, ref xlRange, headerCharityproud.FundColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.TypeColNum), GetFieldValue(ref i, ref xlRange, headerCharityproud.MethodColNum),
+                  GetFieldValue(ref i, ref xlRange, headerCharityproud.AmountColNum)));
+        }
 
         private static void SetTransactions(ref int i, ref Excel.Range xlRange)
         {
@@ -307,7 +339,86 @@ namespace Donor
                 headerTransaction.AccountNumberColNum = j;
             }
 
+            //for charity proud
+            if(headerName.Contains("consituent") && headerName.Contains("number"))
+            {
+                headerCharityproud.NameColNum = j;
+            }
 
+            if (headerName.Contains("address") && headerName.Contains("line") && headerName.Contains("1"))
+            {
+                headerCharityproud.AddressLine1 = j;
+            }
+
+            if (headerName.Contains("address") && headerName.Contains("line") && headerName.Contains("2"))
+            {
+                headerCharityproud.AddressLine2 = j;
+            }
+
+            if (headerName.Contains("city"))
+            {
+                headerCharityproud.CityColNum = j;
+            }
+
+            if (headerName.Contains("state"))
+            {
+                headerCharityproud.StateColNum = j;
+            }
+
+            if (headerName.Contains("zip"))
+            {
+                headerCharityproud.ZipCodeColNum = j;
+            }
+
+            if (headerName.Contains("phone"))
+            {
+                headerCharityproud.PhoneColNum = j;
+            }
+
+            if (headerName.Contains("email"))
+            {
+                headerCharityproud.EmailColNum = j;
+            }
+
+            if (headerName.Contains("date"))
+            {
+                headerCharityproud.DateColNum = j;
+            }
+
+            if (headerName.Contains("campaign"))
+            {
+                headerCharityproud.CampaignColNum = j;
+            }
+
+            if (headerName.Contains("mini-campaign"))
+            {
+                headerCharityproud.MiniCampaignColNum = j;
+            }
+
+            if (headerName.Contains("fund") && headerName.Contains("type"))
+            {
+                headerCharityproud.FundColNum = j;
+            }
+
+            if (headerName.Contains("transaction") && headerName.Contains("type"))
+            {
+                headerCharityproud.TypeColNum = j;
+            }
+
+            if (headerName.Contains("gift") && headerName.Contains("type"))
+            {
+                headerCharityproud.MethodColNum = j;
+            }
+
+            if (headerName.Contains("amount"))
+            {
+                headerCharityproud.AmountColNum = j;
+            }
+
+            if (headerName.Contains("constituent") && headerName.Contains("id"))
+            {
+                headerCharityproud.AccountNumberColNum = j;
+            }
 
         }
 
@@ -339,16 +450,6 @@ namespace Donor
                 }
             }
         }
-
-        public static void BloomerangData()
-        {
-
-        }
-
-        public static void CharityProudData()
-        {
-
-        }
     }
 
     public class BloomerangColumnHeaderConstituents
@@ -378,6 +479,27 @@ namespace Donor
         public int MethodColNum { get; set; }
         public int AmountColNum { get; set; }
         public int AccountNumberColNum { get; set; }
+
+    }
+
+    public class CharityproudHeaderConstituents
+    {
+        public int AccountNumberColNum { get; set; }
+        public int NameColNum { get; set; }
+        public int AddressLine1 { get; set; }
+        public int AddressLine2 { get; set; }
+        public int CityColNum { get; set; }
+        public int StateColNum { get; set; }
+        public int ZipCodeColNum { get; set; }
+        public int PhoneColNum { get; set; }
+        public int EmailColNum { get; set; }
+        public int DateColNum { get; set; }
+        public int CampaignColNum { get; set; }
+        public int MiniCampaignColNum { get; set; }
+        public int FundColNum { get; set; }
+        public int TypeColNum { get; set; }
+        public int AmountColNum { get; set; }
+        public int MethodColNum { get; set; }
 
     }
 }
