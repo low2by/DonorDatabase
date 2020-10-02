@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Donor
 {
@@ -52,6 +53,18 @@ namespace Donor
                 return true;
             }
             return false;
+        }
+
+        public static Dictionary<string, Transaction> GetTransactionDictionary(this IEnumerable<Transaction> transaction)
+        {
+            Dictionary<string, Transaction> transactionDictionary = new Dictionary<string, Transaction>();
+
+            foreach (Transaction trans in transaction)
+            {
+                transactionDictionary.Add(trans.GetAccountNumber(), trans);
+            }
+
+            return transactionDictionary;
         }
     }
 }

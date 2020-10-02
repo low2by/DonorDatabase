@@ -34,7 +34,7 @@ namespace Donor
             this.transactions = new List<Transaction>();
         }
 
-        public bool IsMatchingAddress(Constituents left, Constituents right)
+        public bool IsMatchingAddress(ref Constituents left, ref Constituents right)
         {
             if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
                 return false;
@@ -162,7 +162,8 @@ namespace Donor
             string[] addyArr = address.Split(' ');
             foreach(string strAddy in addyArr)
             {
-                eachString += " " + char.ToUpper(strAddy[0]) + strAddy.Substring(1);
+                if(strAddy.Trim().Length > 0)
+                    eachString += " " + char.ToUpper(strAddy[0]) + strAddy.Substring(1);
             }
 
             return eachString.Trim();
@@ -208,7 +209,7 @@ namespace Donor
 
         public string GetName()
         {
-            return contactInformation.LastName() + ", " + contactInformation.FirstName();
+            return contactInformation.Name();
         }
 
         public string GetTypeOfConstituent()
@@ -404,19 +405,13 @@ namespace Donor
         public static Dictionary<string, Constituents> AddTransaction(this IEnumerable<Constituents> constituents, IEnumerable<Transaction>  donation)
         {
             Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
-            List<Transaction> listTran;
+            Dictionary<string, Transaction> trans = donation.GetTransactionDictionary();
 
-            foreach(Transaction trans in donation)
+            foreach(KeyValuePair<string, Transaction> transactions in trans)
             {
-                if (cons.ContainsKey(trans.GetAccountNumber()))
+                if (cons.ContainsKey(transactions.Key))
                 {
-                    listTran = cons[trans.GetAccountNumber()].GetTransactions();
-
-                    foreach(Transaction consTran in listTran)
-                    {
-                        if (!consTran.TransactionsMatch(trans))
-                            cons[trans.GetAccountNumber()].AddTransaction(trans);
-                    }
+                    cons[transactions.Key].AddTransaction(transactions.Value);
                 }
             }
 
