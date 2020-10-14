@@ -8,6 +8,22 @@ namespace Donor
     {
         private string accountNumber;
         private string name;
+        public Transaction(string _accountNumber, string _name, string _donationDate, string _campaign, string _miniCampaign, string _fund, string _type, string _method, string _donationAmount, string _InKindMarketValue, string _InKindDescr)
+        {
+            name = _name;
+            accountNumber = _accountNumber;
+            DonationDate = _donationDate;
+            DonationAmount = _donationAmount;
+            Campaign = _campaign;
+            MiniCampaign = _miniCampaign;
+            Fund = _fund;
+            TransactionType = _type;
+            TransactionMethod = _method;
+            InKindMarketValue = _InKindMarketValue;
+            InKindDescr = _InKindDescr;
+
+        }
+
         public Transaction(string _accountNumber, string _name, string _donationDate, string _campaign, string _miniCampaign, string _fund, string _type, string _method, string _donationAmount)
         {
             name = _name;
@@ -28,13 +44,15 @@ namespace Donor
             return accountNumber;
         }
         public string GetName { get => name.Trim(); private set { } }
-        public string DonationDate { set; get; }
-        public string DonationAmount { set; get; }
-        public string Campaign { set; get; }
-        public string MiniCampaign { set; get; }
-        public string Fund { set; get; }
-        public string TransactionType { set; get; }
-        public string TransactionMethod { set; get; }
+        public string DonationDate { private set; get; }
+        public string DonationAmount { private set; get; }
+        public string Campaign { private set; get; }
+        public string MiniCampaign { private set; get; }
+        public string Fund { private set; get; }
+        public string TransactionType { private set; get; }
+        public string TransactionMethod { private set; get; }
+        public string InKindMarketValue { get; private set; }
+        public string InKindDescr { get; private set; }
     }
 
     public static class MyExtensions
@@ -55,13 +73,22 @@ namespace Donor
             return false;
         }
 
-        public static Dictionary<string, Transaction> GetTransactionDictionary(this IEnumerable<Transaction> transaction)
+        public static Dictionary<string, List<Transaction>> GetTransactionDictionary(this IEnumerable<Transaction> transaction)
         {
-            Dictionary<string, Transaction> transactionDictionary = new Dictionary<string, Transaction>();
+            Dictionary<string, List<Transaction>> transactionDictionary = new Dictionary<string, List<Transaction>>();
+            List<Transaction> newTrans = new List<Transaction>();
 
             foreach (Transaction trans in transaction)
             {
-                transactionDictionary.Add(trans.GetAccountNumber(), trans);
+                if (transactionDictionary.ContainsKey(trans.GetAccountNumber()))
+                {
+                    transactionDictionary[trans.GetAccountNumber()].Add(trans);
+                }
+                else
+                {
+                    newTrans.Add(trans);
+                    transactionDictionary.Add(trans.GetAccountNumber(), newTrans);
+                }
             }
 
             return transactionDictionary;

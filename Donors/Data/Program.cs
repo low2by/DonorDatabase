@@ -25,63 +25,21 @@ namespace Donor
                 BloomerangColumnHeaderConstituents headerConstituents = new BloomerangColumnHeaderConstituents();
                 BloomerangColumnHeaderTransaction headerTransaction = new BloomerangColumnHeaderTransaction();
                 CharityproudHeaderConstituents headerCharityproud = new CharityproudHeaderConstituents();
-                string filepath = "@\"" + file + "\"";
+                string filepath = file;
                 GetExcelFile(ref filepath, ref constituents, ref transactions, ref  headerConstituents, ref  headerTransaction, ref  headerCharityproud);
             }
 
-            //foreach(Constituents name in constituents)
-            //{
-            //    Console.WriteLine("Name:\t"+name.GetName()+"\nType:\t"+name.GetTypeOfConstituent()+"\nAccount:\t"+name.GetAccountNumber() 
-            //        + "\nStreet:\t"+name.GetAddress() +"\nCity:\t"+name.GetCity()+"\nState:\t"+name.GetState() + "\nZip Code:\t" + name.GetZipCode()
-            //        + "\nEmail:\t"+ name.GetEmail()+ "\nPhone Number:\t"+name.GetPhoneNumber()+"\n\r\n\r");
+            Dictionary<string, Constituents> woodbury = constituents.AddTransaction(transactions);
 
-
-            //}
-
-            //foreach (Transaction name in transactions)
-            //{
-            //    Console.WriteLine("Name:\t" + name.GetName + "\nAccount:\t"+name.GetAccountNumber+ "\nDate:\t" + name.DonationDate + "\nCampaign:\t" + name.Campaign
-            //        + "\nMini-Campaign:\t" + name.MiniCampaign + "\nFund:\t" + name.Fund + "\nType:\t" + name.TransactionType + "\nMethod:\t" + name.TransactionMethod
-            //        + "\nAmount:\t" + name.DonationAmount + "\n\r\n\r");
-            //}
-
-            //constituents.Add(new Constituents("1", "eman low", "low", "eman", "2500 So. State St.", "SLC", "UT", "84108", "8015581375", "lemmanuel@yahoo.com", "individual"));
-            //constituents.Add(new Constituents("2", "jane low", "low", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
-            //constituents.Add(new Constituents("3", "jane lok", "lok", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
-            //constituents.Add(new Constituents("4", "jane loa", "loa", "jane", "2500 So. State St.", "SLC", "UT", "84108", "8015581372", "lemmanuel14@yahoo.com", "individual"));
-
-
-
-            //Dictionary<int, IEnumerable<Constituents>> listofMatchingAddress = constituents.HaveSameAddress();
-
-            //constituents.AddTransaction(transactions);
-
-            //foreach (Constituents person in constituents)
-            //{
-            //    Console.WriteLine(person.GetName() + " has " + listofMatchingAddress[person.GetAccountNumber()].Count() + " with the same last name:");
-            //}
-
-            //Dictionary<string, Constituents> consTrans = constituents.AddTransaction(transactions);
-
-            //foreach (KeyValuePair<string, Constituents> person in consTrans)
-            //{
-            //    //person.Value.GetTransactions()
-            //    Console.WriteLine("Constituents Info: \n" + "Name:\t" + person.Value.GetName() + "\nType:\t" + person.Value.GetTypeOfConstituent() + "\nAccount:\t" + person.Value.GetAccountNumber()
-            //        + "\nStreet:\t" + person.Value.GetAddress() + "\nCity:\t" + person.Value.GetCity() + "\nState:\t" + person.Value.GetState() + "\nZip Code:\t" + person.Value.GetZipCode()
-            //        + "\nEmail:\t" + person.Value.GetEmail() + "\nPhone Number:\t" + person.Value.GetPhoneNumber() + "\n\r\n\r");
-
-            //    foreach (Transaction trans in person.Value.GetTransactions())
-            //    {
-            //        Console.WriteLine("Transaction Info: \n" + "\nAccount:\t" + trans.GetAccountNumber() + "\nDate:\t" + trans.DonationDate + "\nCampaign:\t" + trans.Campaign
-            //       + "\nMini-Campaign:\t" + trans.MiniCampaign + "\nFund:\t" + trans.Fund + "\nType:\t" + trans.TransactionType + "\nMethod:\t" + trans.TransactionMethod
-            //       + "\nAmount:\t" + trans.DonationAmount + "\n\r\n\r");
-            //    }
-
-            //}
-
+            WriteExcelFile(ref woodbury);
 
 
             Console.Read();
+        }
+
+        public static void GetWoodbury(ref Dictionary<string, Constituents> woodbury)
+        {
+
         }
 
         public static void GetExcelFile(ref string filepath, ref List<Constituents> constituents, ref List<Transaction> transaction,
@@ -156,6 +114,39 @@ namespace Donor
             Marshal.ReleaseComObject(xlApp);
         }
 
+        public static void WriteExcelFile(ref Dictionary<string, Constituents> constitunets)
+        {
+            Excel.Application excelApp = new Excel.Application();
+            if (excelApp != null)
+            {
+                Excel.Workbook excelWorkbook = excelApp.Workbooks.Add();
+                Excel.Worksheet excelWorksheet = (Excel.Worksheet)excelWorkbook.Sheets.Add();
+
+                excelWorksheet.Cells[1, 1] = "Value1";
+                excelWorksheet.Cells[2, 1] = "Value2";
+                excelWorksheet.Cells[3, 1] = "Value3";
+                excelWorksheet.Cells[4, 1] = "Value4test";
+
+                for(int i = 0; i < constitunets.Count; i++)
+                {
+                    for(int k = 0; k < constitunets.Values.Count + constitunets.TryGetValue(constitunets.ge))
+                }
+
+                excelApp.DisplayAlerts = false;
+                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabase\abc1.xls", Excel.XlFileFormat.xlWorkbookNormal);
+                excelApp.DisplayAlerts = true;
+
+                excelWorkbook.Close();
+                excelApp.Quit();
+
+                Marshal.FinalReleaseComObject(excelWorksheet);
+                Marshal.FinalReleaseComObject(excelWorkbook);
+                Marshal.FinalReleaseComObject(excelApp);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
+
         private static void SetIndividualConstituentsFields(ref List<Constituents> constituents, ref int i, ref Excel.Range xlRange, ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction)
         {
             constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum, ref headerTransaction),
@@ -186,7 +177,7 @@ namespace Donor
             transaction.Add(new Transaction(GetFieldValue(ref i, ref xlRange, headerTransaction.AccountNumberColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.NameColNum, ref headerTransaction),
                 GetFieldValue(ref i, ref xlRange, headerTransaction.DateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.CampaignColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.MiniCampaignColNum, ref headerTransaction),
                  GetFieldValue(ref i, ref xlRange, headerTransaction.FundColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.TypeColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.MethodColNum, ref headerTransaction),
-                  GetFieldValue(ref i, ref xlRange, headerTransaction.AmountColNum, ref headerTransaction)));
+                  GetFieldValue(ref i, ref xlRange, headerTransaction.AmountColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.MarketValueColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.InKindDescrColNum, ref headerTransaction)));
         }
 
         private static string GetFieldValue(ref int i, ref Excel.Range xlRange, int _colNum, ref BloomerangColumnHeaderTransaction headerTransaction)
@@ -346,8 +337,18 @@ namespace Donor
                 headerTransaction.AccountNumberColNum = j;
             }
 
+            if (headerName.Contains("in") && headerName.Contains("kind") && headerName.Contains("fair") && headerName.Contains("market") && headerName.Contains("value"))
+            {
+                headerTransaction.MarketValueColNum = j;
+            }
+
+            if (headerName.Contains("in") && headerName.Contains("kind") && headerName.Contains("description"))
+            {
+                headerTransaction.InKindDescrColNum = j;
+            }
+
             //for charity proud
-            if(headerName.Contains("constituent") && headerName.Contains("name"))
+            if (headerName.Contains("constituent") && headerName.Contains("name"))
             {
                 headerCharityproud.NameColNum = j;
             }
@@ -457,6 +458,8 @@ namespace Donor
         public int TypeColNum { get; set; }
         public int MethodColNum { get; set; }
         public int AmountColNum { get; set; }
+        public int MarketValueColNum { get; set; }
+        public int InKindDescrColNum { get; set; }
         public int AccountNumberColNum { get; set; }
 
     }

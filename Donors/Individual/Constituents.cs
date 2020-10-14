@@ -192,9 +192,12 @@ namespace Donor
 
         }
 
-        public void AddTransaction(Transaction incomingTran)
+        public void AddTransaction(List<Transaction> incomingTran)
         {
-            transactions.Add(incomingTran);
+            foreach(Transaction trans in incomingTran)
+            {
+                transactions.Add(trans);
+            }
         }
 
         public List<Transaction> GetTransactions()
@@ -405,9 +408,9 @@ namespace Donor
         public static Dictionary<string, Constituents> AddTransaction(this IEnumerable<Constituents> constituents, IEnumerable<Transaction>  donation)
         {
             Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
-            Dictionary<string, Transaction> trans = donation.GetTransactionDictionary();
+            Dictionary<string, List<Transaction>> trans = donation.GetTransactionDictionary();
 
-            foreach(KeyValuePair<string, Transaction> transactions in trans)
+            foreach(KeyValuePair<string, List<Transaction>> transactions in trans)
             {
                 if (cons.ContainsKey(transactions.Key))
                 {
