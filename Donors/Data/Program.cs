@@ -13,12 +13,13 @@ namespace Donor
 {
     class Program
     {
+        private static List<string> header = new List<string>();
+
         static void Main(string[] args)
         {
 
             List<Constituents> constituents = new List<Constituents>();
             List<Transaction> transactions = new List<Transaction>();
-            //GetExcelFile();
 
             foreach (string file in Directory.EnumerateFiles(@"C:\Users\elotubai10\Desktop\donordatabase\", "*.xlsx"))
             {
@@ -26,19 +27,55 @@ namespace Donor
                 BloomerangColumnHeaderTransaction headerTransaction = new BloomerangColumnHeaderTransaction();
                 CharityproudHeaderConstituents headerCharityproud = new CharityproudHeaderConstituents();
                 string filepath = file;
-                GetExcelFile(ref filepath, ref constituents, ref transactions, ref  headerConstituents, ref  headerTransaction, ref  headerCharityproud);
+                GetExcelFile(ref filepath, ref constituents, ref transactions, ref headerConstituents, ref headerTransaction, ref headerCharityproud);
             }
 
-            Dictionary<string, Constituents> woodbury = constituents.AddTransaction(transactions);
+            //Dictionary<string, Constituents> cons = constituents.AddTransaction(transactions);
+
+            Dictionary<string, Constituents>  woodbury = GetWoodbury(ref constituents, ref transactions);
 
             WriteExcelFile(ref woodbury);
 
-
+            Console.WriteLine("All Done");
             Console.Read();
         }
 
-        public static void GetWoodbury(ref Dictionary<string, Constituents> woodbury)
+        /// <summary>
+        /// Gets all the constituents with the name and email woodbury
+        /// </summary>
+        /// <param name="woodbury"></param>
+        /// <returns></returns>
+        public static Dictionary<string, Constituents> GetWoodbury(ref List<Constituents> constituents, ref List<Transaction> transaction)
         {
+            //Console.WriteLine("Getting Constitunets with WoodBury names and email");
+            List<Constituents> woodBuryCons = new List<Constituents>();
+            List<Transaction> woodBuryTrans = new List<Transaction>();
+
+            string[] dateArray;
+
+            foreach (Constituents cons in constituents)
+            {
+                if(cons.GetName().ToLower().Contains("woodbury") || cons.GetLastName().ToLower().Contains("woodbury") 
+                    || cons.GetFirstName().ToLower().Contains("woodbury") || cons.GetEmail().ToLower().Contains("woodbury"))
+                {
+
+                    woodBuryCons.Add(cons);
+                }
+            }
+
+            foreach(Transaction trans in transaction)
+            {
+                dateArray = trans.DonationDate.Split('/');
+
+                if (int.TryParse(dateArray[2], out int year) && year > 2017)
+                {
+                    woodBuryTrans.Add(trans);
+                }
+            }
+
+            Console.WriteLine("Done Getting Constitunets with WoodBury names and email");
+            return woodBuryCons.AddTransaction(woodBuryTrans);
+
 
         }
 
@@ -46,18 +83,18 @@ namespace Donor
             ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction, ref CharityproudHeaderConstituents headerCharityproud)
         {
 
-            
+            Console.WriteLine("Getting File");
             //Create COM Objects. Create a COM object for everything that is referenced
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(filepath);
-            Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+            Excel.Worksheet xlWorksheet = xlWorkbook.Sheets[1];
             Excel.Range xlRange = xlWorksheet.UsedRange;
 
             int rowCount = xlRange.Rows.Count;
             int colCount = xlRange.Columns.Count;
 
             //this is for testing. delete leter
-            rowCount = 22;
+            //rowCount = 1000;
 
 
             //iterate over the rows and columns and print to the console as it appears in the file
@@ -67,6 +104,11 @@ namespace Donor
                 if (i == 1)
                 {
                     GetHeader(ref colCount, ref xlRange, ref i, ref headerConstituents, ref headerTransaction, ref headerCharityproud);
+
+                    if (headerTransaction.AmountColNum == 0)
+                        Console.WriteLine("Setting the Constituents : " + rowCount + " constituents...");
+                    else
+                        Console.WriteLine("Setting the Transactions : " + rowCount + " Transactions...");
                     continue;
                 }
 
@@ -92,7 +134,11 @@ namespace Donor
                     SetCharityConstituentsTransaction(constituents, transaction, ref i, ref xlRange, headerCharityproud, headerTransaction);
                 }
 
+                //Console.WriteLine("At row : " + i");
+
             }
+
+            //Console.WriteLine("Finished Setting the Constituents and Transation: ");
             //cleanup
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -116,24 +162,74 @@ namespace Donor
 
         public static void WriteExcelFile(ref Dictionary<string, Constituents> constitunets)
         {
+            Console.WriteLine("Writing to File");
             Excel.Application excelApp = new Excel.Application();
             if (excelApp != null)
             {
                 Excel.Workbook excelWorkbook = excelApp.Workbooks.Add();
                 Excel.Worksheet excelWorksheet = (Excel.Worksheet)excelWorkbook.Sheets.Add();
+                Excel.Range xlRange = excelWorksheet.UsedRange;
 
-                excelWorksheet.Cells[1, 1] = "Value1";
-                excelWorksheet.Cells[2, 1] = "Value2";
-                excelWorksheet.Cells[3, 1] = "Value3";
-                excelWorksheet.Cells[4, 1] = "Value4test";
+                xlRange.Cells[1, 1] = "Account Number";
+                xlRange.Cells[1, 2] = "Name";
+                xlRange.Cells[1, 3] = "Last Name";
+                xlRange.Cells[1, 4] = "First Name";
+                xlRange.Cells[1, 5] = "Primary Street";
+                xlRange.Cells[1, 6] = "Primary City";
+                xlRange.Cells[1, 7] = "Primary State";
+                xlRange.Cells[1, 8] = "Primary ZIP Code";
+                xlRange.Cells[1, 9] = "Primary Phone Number";
+                xlRange.Cells[1, 10] = "Primary Email Address";
+                xlRange.Cells[1, 11] = "Type";
+                xlRange.Cells[1, 12] = "Date";
+                xlRange.Cells[1, 13] = "Campaign";
+                xlRange.Cells[1, 14] = "Mini-Campaign";
+                xlRange.Cells[1, 15] = "Fund";
+                xlRange.Cells[1, 16] = "Type";
+                xlRange.Cells[1, 17] = "Method";
+                xlRange.Cells[1, 18] = "Amount";
+                xlRange.Cells[1, 19] = "In Kind Market Value";
+                xlRange.Cells[1, 20] = "In Kind Description";
 
-                for(int i = 0; i < constitunets.Count; i++)
-                {  
-                    for(int k = 0; k < constitunets.Values.Count + constitunets.TryGetValue(constitunets.ge))
+                int row = 2;
+                bool addRow;
+                foreach(KeyValuePair<string, Constituents> cons in constitunets)
+                {
+                    xlRange.Cells[row, 1] = cons.Value.GetAccountNumber();
+                    xlRange.Cells[row, 2] = cons.Value.GetName();
+                    xlRange.Cells[row, 3] = cons.Value.GetLastName();
+                    xlRange.Cells[row, 4] = cons.Value.GetFirstName();
+                    xlRange.Cells[row, 5] = cons.Value.GetAddress();
+                    xlRange.Cells[row, 6] = cons.Value.GetCity();
+                    xlRange.Cells[row, 7] = cons.Value.GetState();
+                    xlRange.Cells[row, 8] = cons.Value.GetZipCode();
+                    xlRange.Cells[row, 9] = cons.Value.GetPhoneNumber();
+                    xlRange.Cells[row, 10] = cons.Value.GetEmail();
+                    xlRange.Cells[row, 11] = cons.Value.GetTypeOfConstituent();
+
+                    addRow = true;
+                    foreach(Transaction trans in cons.Value.GetTransactions())
+                    {
+                        xlRange.Cells[row, 12] = trans.DonationDate;
+                        xlRange.Cells[row, 13] = trans.Campaign;
+                        xlRange.Cells[row, 14] = trans.MiniCampaign;
+                        xlRange.Cells[row, 15] = trans.Fund;
+                        xlRange.Cells[row, 16] = trans.TransactionType;
+                        xlRange.Cells[row, 17] = trans.TransactionMethod;
+                        xlRange.Cells[row, 18] = trans.DonationAmount;
+                        xlRange.Cells[row, 19] = trans.InKindMarketValue;
+                        xlRange.Cells[row, 20] = trans.InKindDescr;
+                        row += 1;
+                        addRow = false;
+                    }
+
+                    if(addRow)
+                        row += 1;
+
                 }
 
                 excelApp.DisplayAlerts = false;
-                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabase\abc1.xls", Excel.XlFileFormat.xlWorkbookNormal);
+                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabaseresult\abc1.xls", Excel.XlFileFormat.xlWorkbookNormal);
                 excelApp.DisplayAlerts = true;
 
                 excelWorkbook.Close();
@@ -214,6 +310,7 @@ namespace Donor
         {
             string headerName;
 
+            //Console.WriteLine("Getting the Header");
             for (int j = 1; j <= colCount; j++)
             {
                 //new line
@@ -226,15 +323,13 @@ namespace Donor
 
                 }
 
-
-
-                //if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
-                //    Console.Write(xlRange.Cells[i, j].Value2.ToString() + "\t");
             }
         }
 
         private static void AssignHeaderCol(ref string headerName, ref int j, ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction, ref CharityproudHeaderConstituents headerCharityproud)
         {
+            header.Add(headerName);
+
             if (headerName.Equals("name"))
             {
                 headerConstituents.NameColNum = j;

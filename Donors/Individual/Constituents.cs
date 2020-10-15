@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
@@ -192,12 +193,9 @@ namespace Donor
 
         }
 
-        public void AddTransaction(List<Transaction> incomingTran)
+        public void AddTransaction(Transaction incomingTran)
         {
-            foreach(Transaction trans in incomingTran)
-            {
-                transactions.Add(trans);
-            }
+            transactions.Add(incomingTran);
         }
 
         public List<Transaction> GetTransactions()
@@ -233,7 +231,7 @@ namespace Donor
 
         public string GetCity()
         {
-            return billingAddress.State;
+            return billingAddress.City;
         }
 
         public string GetZipCode()
@@ -395,26 +393,19 @@ namespace Donor
 
         public static Dictionary<string, Constituents> GetConstituentDictionary(this IEnumerable<Constituents> constituents)
         {
-            Dictionary<string, Constituents> constituentsDictionary = new Dictionary<string, Constituents>();
-
-            foreach (Constituents person in constituents)
-            {
-                constituentsDictionary.Add(person.GetAccountNumber(), person);
-            }
-
-            return constituentsDictionary;
+            return constituents.ToDictionary(c => c.GetAccountNumber());
         }
 
         public static Dictionary<string, Constituents> AddTransaction(this IEnumerable<Constituents> constituents, IEnumerable<Transaction>  donation)
         {
+            Console.WriteLine("Adding Transaction to corisponding constituents");
             Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
-            Dictionary<string, List<Transaction>> trans = donation.GetTransactionDictionary();
 
-            foreach(KeyValuePair<string, List<Transaction>> transactions in trans)
+            foreach(Transaction transactions in donation)
             {
-                if (cons.ContainsKey(transactions.Key))
+                if (cons.ContainsKey(transactions.GetAccountNumber()))
                 {
-                    cons[transactions.Key].AddTransaction(transactions.Value);
+                    cons[transactions.GetAccountNumber()].AddTransaction(transactions);
                 }
             }
 
