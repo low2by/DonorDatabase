@@ -14,13 +14,27 @@ namespace Donor
             name = _name;
             accountNumber = _accountNumber;
             DonationDate = _donationDate;
-            DonationAmount = _donationAmount;
+            if(Double.TryParse(_donationAmount, out double donationAmount))
+            {
+                DonationAmount = donationAmount;
+            }
+            else
+            {
+                DonationAmount = 0;
+            }
             Campaign = _campaign;
             MiniCampaign = _miniCampaign;
             Fund = _fund;
             TransactionType = _type;
             TransactionMethod = _method;
-            InKindMarketValue = _InKindMarketValue;
+            if (Double.TryParse(_InKindMarketValue, out double inKindAmount))
+            {
+                InKindMarketValue = inKindAmount;
+            }
+            else
+            {
+                InKindMarketValue = 0;
+            }
             InKindDescr = _InKindDescr;
 
         }
@@ -30,7 +44,14 @@ namespace Donor
             name = _name;
             accountNumber = _accountNumber;
             DonationDate = _donationDate;
-            DonationAmount = _donationAmount;
+            if (Double.TryParse(_donationAmount, out double donationAmount))
+            {
+                DonationAmount = donationAmount;
+            }
+            else
+            {
+                DonationAmount = 0;
+            }
             Campaign = _campaign;
             MiniCampaign = _miniCampaign;
             Fund = _fund;
@@ -46,14 +67,29 @@ namespace Donor
         }
         public string GetName { get => name.Trim(); private set { } }
         public string DonationDate { private set; get; }
-        public string DonationAmount { private set; get; }
+        public double DonationAmount { set; get; }
         public string Campaign { private set; get; }
         public string MiniCampaign { private set; get; }
         public string Fund { private set; get; }
         public string TransactionType { private set; get; }
         public string TransactionMethod { private set; get; }
-        public string InKindMarketValue { get; private set; }
+        public double InKindMarketValue { get; set; }
         public string InKindDescr { get; private set; }
+        public double Amount
+        {
+            private set
+            {
+                if (DonationAmount == 0)
+                    Amount = InKindMarketValue;
+                Amount = DonationAmount;
+            }
+            get
+            {
+                if (DonationAmount == 0)
+                    return InKindMarketValue;
+                return DonationAmount;
+            }
+        }
     }
 
     public static class MyExtensions
@@ -66,7 +102,7 @@ namespace Donor
                 donation.Fund.Trim().Equals(incomingDonation.Fund.Trim()) &&
                 donation.TransactionType.Trim().Equals(incomingDonation.TransactionType.Trim()) &&
                 donation.TransactionMethod.Trim().Equals(incomingDonation.TransactionMethod.Trim()) &&
-                donation.DonationAmount.Trim().Equals(incomingDonation.DonationAmount.Trim())
+                donation.Amount == incomingDonation.Amount
                 )
             {
                 return true;
@@ -74,9 +110,5 @@ namespace Donor
             return false;
         }
 
-        //public static Dictionary<string, Transaction> GetTransactionDictionary(this IEnumerable<Transaction> transaction)
-        //{
-        //    return transaction.ToDictionary(t => t.GetAccountNumber()); ;
-        //}
     }
 }

@@ -193,6 +193,7 @@ namespace Donor
 
         }
 
+
         public void AddTransaction(Transaction incomingTran)
         {
             transactions.Add(incomingTran);
@@ -328,6 +329,11 @@ namespace Donor
 
     public static class MyExtensions
     {
+        /// <summary>
+        /// Determines if a char array has both ints and characters
+        /// </summary>
+        /// <param name="arr"></param>
+        /// <returns></returns>
         public static bool HasBothIntChar(this char[] arr)
         {
             bool intItem = false;
@@ -345,60 +351,103 @@ namespace Donor
             return intItem && charItem;
         }
 
-        public static Dictionary<string, IEnumerable<Constituents>> HaveSameLastName<T>(this IEnumerable<Constituents> constituents)
+        public static Dictionary<string, Dictionary<string, Constituents>> HaveSameLastName<T>(this IEnumerable<Constituents> constituents)
         {
-            Dictionary<string, IEnumerable<Constituents>> matchingLastnames = new Dictionary<string, IEnumerable<Constituents>>();
-            foreach (Constituents person in constituents)
-            {
-                List<Constituents> listOfMathcingLastName = new List<Constituents>();
+            //the return variable
+            Dictionary<string, Dictionary<string, Constituents>> matchingLastName = new Dictionary<string, Dictionary<string, Constituents>>();
 
-                foreach (Constituents listConstituents in constituents)
+            //go through every constituent and check the address agaisnt the other constituents
+            foreach (Constituents currentCon in constituents)
+            {
+                //if the address of the currentCon is empty, continue
+                if (currentCon.GetLastName().Trim().Length == 0)
+                    continue;
+
+                //create the dictionary for the constituents to be added in
+                Dictionary<string, Constituents> sameAddy = new Dictionary<string, Constituents>();
+
+                //add the currentCon  onto the sameAddy dictionary
+                sameAddy.Add(currentCon.GetAccountNumber(), currentCon);
+
+                //the remaining constituents that we compare the current constituent with. 
+                foreach (Constituents compareWithCon in constituents)
                 {
-                    if (person.GetAccountNumber().Equals(listConstituents.GetAccountNumber()))
+                    //if the currentCon is the compareWithCon continue
+                    if (currentCon.GetAccountNumber().Equals(compareWithCon.GetAccountNumber()))
                         continue;
 
-                    if (person.GetLastName().Contains(listConstituents.GetLastName()))
-                        listOfMathcingLastName.Add(listConstituents);
+                    //if the compareWithCon doesnt have an address, continue
+                    if (compareWithCon.GetLastName().Trim().Length == 0)
+                        continue;
+
+                    //if the compareWithCon has the same address, add it to the matchingAddress dictionary
+                    if (currentCon.GetLastName().Equals(compareWithCon.GetLastName()))
+                        sameAddy.Add(currentCon.GetAccountNumber(), currentCon);
                 }
 
-                matchingLastnames.Add(person.GetAccountNumber(), listOfMathcingLastName);
+                //add the currentCon into the matchingAddress dictionary
+                matchingLastName.Add(currentCon.GetAccountNumber(), sameAddy);
 
             }
 
-            return matchingLastnames;
+            return matchingLastName;
         }
 
-        public static Dictionary<string, IEnumerable<Constituents>> HaveSameAddress(this IEnumerable<Constituents> constituents)
+        public static Dictionary<string, Dictionary<string, Constituents>> HaveSameAddress(this List<Constituents> constituents)
         {
-            Dictionary<string, IEnumerable<Constituents>> matchingLastnames = new Dictionary<string, IEnumerable<Constituents>>();
-            foreach (Constituents person in constituents)
-            {
-                List<Constituents> listOfMathcingLastName = new List<Constituents>();
+            //the return variable
+            Dictionary<string, Dictionary<string, Constituents>> matchingAddress = new Dictionary<string, Dictionary<string, Constituents>>();
 
-                foreach (Constituents listConstituents in constituents)
+            //go through every constituent and check the address agaisnt the other constituents
+            foreach (Constituents currentCon in constituents)
+            {
+                //if the address of the currentCon is empty, continue
+                if (currentCon.GetAddress().Trim().Length == 0)
+                    continue;
+
+                //create the dictionary for the constituents to be added in
+                Dictionary<string, Constituents> sameAddy = new Dictionary<string, Constituents>();
+
+                //add the currentCon  onto the sameAddy dictionary
+                sameAddy.Add(currentCon.GetAccountNumber(), currentCon);
+
+                //the remaining constituents that we compare the current constituent with. 
+                foreach (Constituents compareWithCon in constituents)
                 {
-                    if (person.GetAccountNumber().Equals(listConstituents.GetAccountNumber()))
+                    //if the currentCon is the compareWithCon continue
+                    if (currentCon.GetAccountNumber().Equals(compareWithCon.GetAccountNumber()))
                         continue;
 
-                    if (person.GetAddress().Equals(listConstituents.GetAddress()))
-                        listOfMathcingLastName.Add(listConstituents);
+                    //if the compareWithCon doesnt have an address, continue
+                    if (compareWithCon.GetAddress().Trim().Length == 0)
+                        continue;
+
+                    //if the compareWithCon has the same address, add it to the matchingAddress dictionary
+                    if (currentCon.GetAddress().Equals(compareWithCon.GetAddress()))
+                        sameAddy.Add(currentCon.GetAccountNumber(), currentCon);
                 }
 
-                matchingLastnames.Add(person.GetAccountNumber(), listOfMathcingLastName);
+                //add the currentCon into the matchingAddress dictionary
+                matchingAddress.Add(currentCon.GetAccountNumber(), sameAddy);
 
             }
 
-            return matchingLastnames;
+            return matchingAddress;
         }
 
-        public static Dictionary<string, Constituents> GetConstituentDictionary(this IEnumerable<Constituents> constituents)
+        public static Dictionary<string, Constituents> GetConstituentDictionary(this List<Constituents> constituents)
         {
             return constituents.ToDictionary(c => c.GetAccountNumber());
         }
 
-        public static Dictionary<string, Constituents> AddTransaction(this IEnumerable<Constituents> constituents, IEnumerable<Transaction>  donation)
+        /// <summary>
+        /// Adds a transaction corresponding to its constituents
+        /// </summary>
+        /// <param name="constituents"></param>
+        /// <param name="donation"></param>
+        /// <returns></returns>
+        public static Dictionary<string, Constituents> AddTransaction(this List<Constituents> constituents, ref List<Transaction>  donation)
         {
-            Console.WriteLine("Adding Transaction to corisponding constituents");
             Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
 
             foreach(Transaction transactions in donation)
@@ -410,6 +459,93 @@ namespace Donor
             }
 
             return cons;
+        }
+
+        /// <summary>
+        /// This method 
+        /// </summary>
+        /// <param name="constituents"></param>
+        /// <param name="transactions"></param>
+        /// <returns></returns>
+        public static Dictionary<string, Constituents> GetTopConstituents(this List<Constituents> constituents, ref List<Transaction> transactions)
+        {
+            List<Constituents> listCons = new List<Constituents>();
+            Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
+
+            foreach (Transaction trans in transactions)
+            {
+                if (cons.ContainsKey(trans.GetAccountNumber()))
+                {
+                    listCons.Add(cons[trans.GetAccountNumber()]);
+                }
+            }
+            
+            return listCons.AddTransaction(ref transactions);
+        }
+
+        /// <summary>
+        /// Finds any contituents with the specified lookUp string. Returns a constituents that contains the lookUp string in the constituents name and email with a specified date
+        /// </summary>
+        /// <param name="constituents">List of constituents</param>
+        /// <param name="transaction">List of Transactions</param>
+        /// <param name="lookUp">Used to look up the constituents that contain the lookUp string</param>
+        /// <param name="date">Used to return a specified date of the transactions</param>
+        /// <returns>Returns a dictionary of constituents that contain a specified date and string</returns>
+        public static Dictionary<string, Constituents> GetConstituentsWithNameDate(this List<Constituents> constituents, ref List<Transaction> transaction, ref string lookUp, ref int date)
+        {
+            //Console.WriteLine("Getting Constitunets with WoodBury names and email");
+            List<Constituents> conList = new List<Constituents>();
+            List<Transaction> transList = new List<Transaction>();
+
+            string[] dateArray;
+
+            foreach (Constituents cons in constituents)
+            {
+                if (cons.GetName().ToLower().Contains(lookUp) || cons.GetLastName().ToLower().Contains(lookUp)
+                    || cons.GetFirstName().ToLower().Contains(lookUp) || cons.GetEmail().ToLower().Contains(lookUp))
+                {
+
+                    conList.Add(cons);
+                }
+            }
+
+            foreach (Transaction trans in transaction)
+            {
+                dateArray = trans.DonationDate.Split('/');
+
+                if (int.TryParse(dateArray[2], out int year) && year > date)
+                {
+                    transList.Add(trans);
+                }
+            }
+
+            return conList.AddTransaction(ref transList);
+
+
+        }
+
+        /// <summary>
+        /// This method orders the constituents from highest to lowest donations
+        /// </summary>
+        /// <param name="constituents"></param>
+        /// <param name="transaction"></param>
+        /// <returns>Returns a Dictionary of constituents with only one transaction</returns>
+        public static Dictionary<string, Constituents> DescendingOrderDonations(this List<Constituents> constituents, ref List<Transaction> transaction)
+        {
+            List<Transaction> orderedAmount = transaction.OrderByDescending(a => a.Amount).ToList();
+            Dictionary<string, Transaction> orderedAmountDic = new Dictionary<string, Transaction>();
+
+            foreach (Transaction trans in orderedAmount)
+            {
+                if (!orderedAmountDic.ContainsKey(trans.GetAccountNumber()))
+                {
+                    orderedAmountDic.Add(trans.GetAccountNumber(), trans);
+                }
+            }
+
+            List<Transaction> orderedAmountList = new List<Transaction>(orderedAmountDic.Values.ToList());
+
+            return constituents.GetTopConstituents(ref orderedAmountList);
         }
     }
 }

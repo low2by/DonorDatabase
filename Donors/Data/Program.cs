@@ -13,7 +13,6 @@ namespace Donor
 {
     class Program
     {
-        private static List<string> header = new List<string>();
 
         static void Main(string[] args)
         {
@@ -27,58 +26,18 @@ namespace Donor
                 BloomerangColumnHeaderTransaction headerTransaction = new BloomerangColumnHeaderTransaction();
                 CharityproudHeaderConstituents headerCharityproud = new CharityproudHeaderConstituents();
                 string filepath = file;
+                if (filepath.Contains("~$"))
+                    continue;
                 GetExcelFile(ref filepath, ref constituents, ref transactions, ref headerConstituents, ref headerTransaction, ref headerCharityproud);
             }
-
-            //Dictionary<string, Constituents> cons = constituents.AddTransaction(transactions);
-
-            Dictionary<string, Constituents>  woodbury = GetWoodbury(ref constituents, ref transactions);
-
-            WriteExcelFile(ref woodbury);
 
             Console.WriteLine("All Done");
             Console.Read();
         }
 
-        /// <summary>
-        /// Gets all the constituents with the name and email woodbury
-        /// </summary>
-        /// <param name="woodbury"></param>
-        /// <returns></returns>
-        public static Dictionary<string, Constituents> GetWoodbury(ref List<Constituents> constituents, ref List<Transaction> transaction)
-        {
-            //Console.WriteLine("Getting Constitunets with WoodBury names and email");
-            List<Constituents> woodBuryCons = new List<Constituents>();
-            List<Transaction> woodBuryTrans = new List<Transaction>();
-
-            string[] dateArray;
-
-            foreach (Constituents cons in constituents)
-            {
-                if(cons.GetName().ToLower().Contains("woodbury") || cons.GetLastName().ToLower().Contains("woodbury") 
-                    || cons.GetFirstName().ToLower().Contains("woodbury") || cons.GetEmail().ToLower().Contains("woodbury"))
-                {
-
-                    woodBuryCons.Add(cons);
-                }
-            }
-
-            foreach(Transaction trans in transaction)
-            {
-                dateArray = trans.DonationDate.Split('/');
-
-                if (int.TryParse(dateArray[2], out int year) && year > 2017)
-                {
-                    woodBuryTrans.Add(trans);
-                }
-            }
-
-            Console.WriteLine("Done Getting Constitunets with WoodBury names and email");
-            return woodBuryCons.AddTransaction(woodBuryTrans);
 
 
-        }
-
+       
         public static void GetExcelFile(ref string filepath, ref List<Constituents> constituents, ref List<Transaction> transaction,
             ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction, ref CharityproudHeaderConstituents headerCharityproud)
         {
@@ -94,7 +53,7 @@ namespace Donor
             int colCount = xlRange.Columns.Count;
 
             //this is for testing. delete leter
-            //rowCount = 1000;
+            //rowCount = 60;
 
 
             //iterate over the rows and columns and print to the console as it appears in the file
@@ -116,6 +75,7 @@ namespace Donor
                 {
                     //Console.WriteLine("Setting the constituents\n\r\n\r");
                     SetIndividualConstituentsFields(ref constituents, ref i, ref xlRange, ref headerConstituents, ref headerTransaction);
+                    Console.WriteLine("Constituent: \t" + i);
                 }
                 
                 if(headerTransaction.AmountColNum != 0 && headerCharityproud.AddressLine1 == 0)
@@ -125,6 +85,7 @@ namespace Donor
                     //Console.WriteLine("Row Count: " + i);
                     //Console.WriteLine("Setting the transaction\n\r\n\r");
                     SetTransactions(transaction, ref i, ref xlRange, headerTransaction);
+                    Console.WriteLine("Transaction: \t" + i);
                 }
                     
                 
@@ -229,7 +190,7 @@ namespace Donor
                 }
 
                 excelApp.DisplayAlerts = false;
-                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabaseresult\abc1.xls", Excel.XlFileFormat.xlWorkbookNormal);
+                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabaseresult\top30Donors.xls", Excel.XlFileFormat.xlWorkbookNormal);
                 excelApp.DisplayAlerts = true;
 
                 excelWorkbook.Close();
@@ -328,7 +289,6 @@ namespace Donor
 
         private static void AssignHeaderCol(ref string headerName, ref int j, ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction, ref CharityproudHeaderConstituents headerCharityproud)
         {
-            header.Add(headerName);
 
             if (headerName.Equals("name"))
             {
