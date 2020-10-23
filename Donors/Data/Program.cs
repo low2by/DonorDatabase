@@ -31,6 +31,10 @@ namespace Donor
                 GetExcelFile(ref filepath, ref constituents, ref transactions, ref headerConstituents, ref headerTransaction, ref headerCharityproud);
             }
 
+            Dictionary<string, Constituents> cons = constituents.DescendingOrderTotalDonations(ref transactions);
+
+            WriteExcelFile(ref cons, "toalDonation" );
+
             Console.WriteLine("All Done");
             Console.Read();
         }
@@ -121,7 +125,7 @@ namespace Donor
             Marshal.ReleaseComObject(xlApp);
         }
 
-        public static void WriteExcelFile(ref Dictionary<string, Constituents> constitunets)
+        public static void WriteExcelFile(ref Dictionary<string, Constituents> constitunets, string filename)
         {
             Console.WriteLine("Writing to File");
             Excel.Application excelApp = new Excel.Application();
@@ -151,8 +155,10 @@ namespace Donor
                 xlRange.Cells[1, 18] = "Amount";
                 xlRange.Cells[1, 19] = "In Kind Market Value";
                 xlRange.Cells[1, 20] = "In Kind Description";
+                xlRange.Cells[1, 21] = "Total Donation";
 
                 int row = 2;
+                int consNum = 1, transNum = 0;
                 bool addRow;
                 foreach(KeyValuePair<string, Constituents> cons in constitunets)
                 {
@@ -167,10 +173,14 @@ namespace Donor
                     xlRange.Cells[row, 9] = cons.Value.GetPhoneNumber();
                     xlRange.Cells[row, 10] = cons.Value.GetEmail();
                     xlRange.Cells[row, 11] = cons.Value.GetTypeOfConstituent();
+                    xlRange.Cells[row, 21] = cons.Value.TotalDonation();
+
+                    Console.WriteLine("Constituent: " + consNum + " of " + constitunets.Count);
 
                     addRow = true;
                     foreach(Transaction trans in cons.Value.GetTransactions())
                     {
+                        transNum += 1;
                         xlRange.Cells[row, 12] = trans.DonationDate;
                         xlRange.Cells[row, 13] = trans.Campaign;
                         xlRange.Cells[row, 14] = trans.MiniCampaign;
@@ -182,15 +192,19 @@ namespace Donor
                         xlRange.Cells[row, 20] = trans.InKindDescr;
                         row += 1;
                         addRow = false;
+
+                        Console.WriteLine("Constituent: " + transNum + " of " + cons.Value.GetTransactions().Count);
                     }
 
-                    if(addRow)
+                    transNum = 0;
+                    consNum += 1;
+                    if (addRow)
                         row += 1;
 
                 }
 
                 excelApp.DisplayAlerts = false;
-                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabaseresult\top30Donors.xls", Excel.XlFileFormat.xlWorkbookNormal);
+                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabaseresult\"+ filename+".xls", Excel.XlFileFormat.xlWorkbookNormal);
                 excelApp.DisplayAlerts = true;
 
                 excelWorkbook.Close();

@@ -29,7 +29,6 @@ namespace Donor
         {
             this.accountNumber = _accountNumber;
             this.typeOfConstituent = _type;
-
             this.contactInformation = new ContactInformation(_name, _email, _phoneNumber);
             this.billingAddress = new BillingAddress(_address, _city, _state, _zipCode);
             this.transactions = new List<Transaction>();
@@ -193,6 +192,18 @@ namespace Donor
 
         }
 
+        public double TotalDonation()
+        {
+            double total = 0.0;
+
+            foreach(Transaction trans in GetTransactions())
+            {
+                total += trans.Amount;
+            }
+
+            return total;
+        }
+
 
         public void AddTransaction(Transaction incomingTran)
         {
@@ -203,6 +214,8 @@ namespace Donor
         {
             return transactions;
         }
+
+
 
         public string GetAccountNumber()
         {
@@ -547,5 +560,23 @@ namespace Donor
 
             return constituents.GetTopConstituents(ref orderedAmountList);
         }
+
+        /// <summary>
+        /// This method orders the constituents from highest to lowest donations
+        /// </summary>
+        /// <param name="constituents"></param>
+        /// <param name="transaction"></param>
+        /// <returns>Returns a Dictionary of constituents with only one transaction</returns>
+        public static Dictionary<string, Constituents> DescendingOrderTotalDonations(this List<Constituents> constituents, ref List<Transaction> transaction)
+        {
+            Dictionary<string, Constituents>  cons = constituents.AddTransaction(ref transaction);
+            List<Constituents> consList = cons.Values.ToList();
+            List<Constituents> orderedAmount = consList.OrderByDescending(a => a.TotalDonation()).ToList();
+            return orderedAmount.ToDictionary(c => c.GetAccountNumber());
+        }
+
+
     }
+
+
 }
