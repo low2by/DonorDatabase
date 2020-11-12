@@ -60,6 +60,17 @@ namespace Donor
 
         }
 
+        public bool IsMatchingTransactio(ref Transaction left, ref Transaction right)
+        {
+            return left.Amount == right.Amount
+                && left.DonationDate.Trim().Equals(right.DonationDate.Trim())
+                && left.Campaign.Trim().Equals(right.Campaign.Trim())
+                && left.MiniCampaign.Trim().Equals(right.MiniCampaign.Trim())
+                && left.Fund.Equals(right.Fund)
+                && left.TransactionType.Equals(right.TransactionType)
+                && left.TransactionMethod.Equals(right.TransactionMethod);
+        }
+
         //public int GetAccountNumber { get => accountNumber; private set { } }
         public string GetAccountNumber()
         {

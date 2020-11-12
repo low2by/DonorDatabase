@@ -25,171 +25,13 @@ namespace Donor
             this.transactions = new List<Transaction>();
         }
 
-        public Constituents(string _accountNumber, string _name, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type)
+        public Constituents(string _accountNumber, string _name, string _address1, string _address2, string _city, string _state, string _zipCode, string _phoneNumber, string _email)
         {
             this.accountNumber = _accountNumber;
-            this.typeOfConstituent = _type;
+            this.typeOfConstituent = " ";
             this.contactInformation = new ContactInformation(_name, _email, _phoneNumber);
-            this.billingAddress = new BillingAddress(_address, _city, _state, _zipCode);
+            this.billingAddress = new BillingAddress(_address1, _address2, _city, _state, _zipCode);
             this.transactions = new List<Transaction>();
-        }
-
-        public bool IsMatchingAddress(ref Constituents left, ref Constituents right)
-        {
-            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
-                return false;
-            return FormatAddress(left.GetAddress()).Equals(FormatAddress(right.GetAddress())) 
-                && FormatCity(left.GetCity()).Equals(FormatCity(right.GetCity())) 
-                && left.GetState().Equals(right.GetState()) 
-                && left.GetZipCode().Equals(right.GetZipCode());
-        }
-
-       
-
-        private static string FormatAddress(string address)
-        {
-            address = address.ToLower();
-            string result = "";
-            foreach(string addyItem in GetEachAddressItem(address))
-            {
-
-                result += AbbreviatedStreetNames(addyItem) + " ";
-            }
-
-            result = result.Trim();
-
-            return FirstCharUpperCase(ref result);
-        }
-
-        private static string AbbreviatedStreetNames(string streetName)
-        {
-            if (streetName.Equals("DRIVE".ToLower()) || 
-                streetName.Equals("DRIV".ToLower()) || streetName.Equals("DRIV.".ToLower()) || 
-                streetName.Equals("DRV".ToLower()) || streetName.Equals("DRV.".ToLower()) ||
-                streetName.Equals("DR".ToLower()) || streetName.Equals("DR,".ToLower()))
-                streetName = "DR.".ToLower();
-
-            if (streetName.Equals("ST".ToLower()) || streetName.Equals("STREET".ToLower()) || 
-                streetName.Equals("STRT".ToLower()) || streetName.Equals("STRT.".ToLower()) || 
-                streetName.Equals("STR".ToLower()) || streetName.Equals("STR.".ToLower()))
-                streetName = "ST.".ToLower();
-
-            if (streetName.Equals("LN".ToLower()) || streetName.Equals("LANE".ToLower()))
-                streetName = "LN.".ToLower();
-
-            if (streetName.Equals("S".ToLower()) || streetName.Equals("S.".ToLower()) || streetName.Equals("SO.".ToLower()) || streetName.Equals("SO".ToLower()))
-                streetName = "South".ToLower();
-
-            if (streetName.Equals("N".ToLower()) || streetName.Equals("N.".ToLower()))
-                streetName = "North".ToLower();
-
-            if (streetName.Equals("E".ToLower()) || streetName.Equals("E.".ToLower()))
-                streetName = "East".ToLower();
-
-            if (streetName.Equals("W".ToLower()) || streetName.Equals("W.".ToLower()))
-                streetName = "West".ToLower();
-
-            if (streetName.Equals("CIR".ToLower()) || streetName.Equals("CIR.".ToLower()) || 
-                streetName.Equals("CIRC".ToLower()) || streetName.Equals("CIRC.".ToLower()) || 
-                streetName.Equals("CIRCL".ToLower()) || streetName.Equals("CIRCL.".ToLower()) || 
-                streetName.Equals("CRCL".ToLower()) || streetName.Equals("CRCL.".ToLower()) || 
-                streetName.Equals("CRCLE".ToLower()) || streetName.Equals("CRCLE.".ToLower()) ||
-                streetName.Equals("CIRCLE".ToLower()))
-            {
-                streetName = "Cir.".ToLower();
-            }
-
-            if (streetName.Equals("RD".ToLower()) || streetName.Equals("ROAD".ToLower()))
-                streetName = "RD.".ToLower();
-
-            if (streetName.Equals("AV".ToLower()) || streetName.Equals("AV.".ToLower()) || 
-                streetName.Equals("AVEN".ToLower()) || streetName.Equals("AVEN.".ToLower()) ||
-                streetName.Equals("AVENU".ToLower()) || streetName.Equals("AVENU.".ToLower()) ||
-                streetName.Equals("AVN".ToLower()) || streetName.Equals("AVN.".ToLower()) || 
-                streetName.Equals("AVNUE".ToLower()) || streetName.Equals("AVNUE.".ToLower()) ||
-                streetName.Equals("AVENUE.".ToLower()) || streetName.Equals("AVE".ToLower()))
-            {
-                streetName = "AVE.".ToLower();
-            }
-
-            if (streetName.Equals("CT".ToLower()) || streetName.Equals("COURT".ToLower()))
-                streetName = "CT.".ToLower();
-
-            if (streetName.Equals("Place".ToLower()) || streetName.Equals("PL".ToLower()))
-                streetName = "PL.".ToLower();
-
-            if (streetName.Equals("PKWY".ToLower()) || streetName.Equals("PKWY.".ToLower()) ||
-                streetName.Equals("PKWYS".ToLower()) || streetName.Equals("PKWYS.".ToLower()) ||
-                streetName.Equals("PARKWAYS".ToLower()))
-                streetName = "PKWY.".ToLower();
-
-            if (streetName.Equals("COVE".ToLower()) || streetName.Equals("COVE".ToLower()))
-                streetName = "CV.".ToLower();
-
-            if (streetName.Equals("BLVD".ToLower()) || streetName.Equals("BOUL".ToLower()) || streetName.Equals("BOULEVARD".ToLower()) || streetName.Equals("BOULV".ToLower()))
-                streetName = "BLVD.".ToLower();
-
-            return streetName;
-        }
-         
-        private static IEnumerable<string> Seperte(string address)
-        {
-
-            var words = new List<string> { string.Empty };
-            for (var i = 0; i < address.Length; i++)
-            {
-                words[words.Count - 1] += address[i];
-                if (i + 1 < address.Length && char.IsLetter(address[i]) != char.IsLetter(address[i + 1]))
-                {
-                    words.Add(string.Empty);
-                }
-            }
-            return words;
-
-        }
-         
-        private static string FormatCity(string city)
-        {
-            city = city.ToLower().Trim();
-            if (city.Equals("slc"))
-                city = city.Replace("slc", "salt lake city");
-            return FirstCharUpperCase(ref city);
-        }
-
-        private static string FirstCharUpperCase(ref string address)
-        {
-            string eachString = "";
-            string[] addyArr = address.Split(' ');
-            foreach(string strAddy in addyArr)
-            {
-                if(strAddy.Trim().Length > 0)
-                    eachString += " " + char.ToUpper(strAddy[0]) + strAddy.Substring(1);
-            }
-
-            return eachString.Trim();
-        }
-
-        private static IEnumerable<string> GetEachAddressItem(string address)
-        {
-            string[] arr = address.Split(' ');
-            foreach(string addressItem in arr)
-            {
-                //If an address has the number and name stuck together, seperate them
-                char[] itemChar = addressItem.ToCharArray();
-                if (itemChar.HasBothIntChar())
-                {
-                    foreach (string seperateVale in Seperte(addressItem))
-                    {
-                        yield return seperateVale;
-                    }
-                }
-                else
-                {
-                    yield return addressItem;
-                }
-                
-            }
-
         }
 
         public double TotalDonation()
@@ -215,11 +57,15 @@ namespace Donor
             return transactions;
         }
 
-
-
         public string GetAccountNumber()
         {
             return accountNumber;
+        }
+
+
+        public bool HasAccountNumber()
+        {
+            return accountNumber.Trim().Count() > 0;
         }
 
         public string GetName()
@@ -227,15 +73,31 @@ namespace Donor
             return contactInformation.Name();
         }
 
+        public bool HasName()
+        {
+            return contactInformation.Name().Trim().Count() > 0;
+        }
+
         public string GetTypeOfConstituent()
         {
             return typeOfConstituent;
         }
 
+        public bool HasTypeOfConstituent()
+        {
+            return typeOfConstituent.Trim().Count() > 0;
+        }
+
+
+
         public string GetAddress()
         {
-            string addy = FormatAddress(billingAddress.CityAddress);
-            return addy.Replace("\n", "").Replace("\r", "");
+            return billingAddress.CityAddress;
+        }
+
+        public bool HasAddress()
+        {
+            return billingAddress.CityAddress.Trim().Count() > 0;
         }
 
         public string GetState()
@@ -243,14 +105,33 @@ namespace Donor
             return billingAddress.State;
         }
 
+        public bool HasState()
+        {
+            return billingAddress.State.Trim().Count() > 0;
+        }
+
         public string GetCity()
         {
             return billingAddress.City;
         }
 
+        public bool HasCity()
+        {
+            return billingAddress.City.Trim().Count() > 0;
+        }
+
         public string GetZipCode()
         {
-            return billingAddress.ZipCode;
+            //some zip code have 9 number seperated by a dash
+            //just get the first five number that represent the destination post office or delivery area
+            string[] zipCode = billingAddress.ZipCode.Split('-');
+            //return billingAddress.ZipCode;
+            return zipCode[0];
+        }
+
+        public bool HasZipCode()
+        {
+            return billingAddress.ZipCode.Trim().Count() > 0;
         }
 
         public string GetLastName()
@@ -258,9 +139,19 @@ namespace Donor
             return contactInformation.LastName();
         }
 
+        public bool HasLastName()
+        {
+            return contactInformation.LastName().Trim().Count() > 0;
+        }
+
         public string GetFirstName()
         {
             return contactInformation.FirstName();
+        }
+
+        public bool HasFirstName()
+        {
+            return contactInformation.FirstName().Trim().Count() > 0;
         }
 
         public string GetEmail()
@@ -268,9 +159,19 @@ namespace Donor
             return contactInformation.Email();
         }
 
+        public bool HasEmail()
+        {
+            return contactInformation.Email().Trim().Count() > 0;
+        }
+
         public string GetPhoneNumber()
         {
             return contactInformation.PhoneNumber();
+        }
+
+        public bool HasPhoneNumber()
+        {
+            return contactInformation.PhoneNumber().Trim().Count() > 0;
         }
 
     }
@@ -303,6 +204,13 @@ namespace Donor
             firstName = "";
         }
 
+        public bool IsMatchingContactInformation(ref ContactInformation left, ref ContactInformation right)
+        {
+            return left.Name().Trim().Equals(right.Name().Trim())
+                && left.Email().Trim().Equals(right.Email().Trim())
+                && left.PhoneNumber().Trim().Equals(right.PhoneNumber().Trim());
+        }
+
         public string Name()
         {
             return name;
@@ -332,6 +240,170 @@ namespace Donor
             City = _city;
             State = _state;
             ZipCode = _zipCode;
+        }
+
+        public BillingAddress(string _address1, string _address2, string _city, string _state, string _zipCode)
+        {
+            CityAddress = _address1 + " " + _address2;
+            City = _city;
+            State = _state;
+            ZipCode = _zipCode;
+        }
+
+        public bool IsMatchingBillingAddress(ref BillingAddress left, ref BillingAddress right)
+        {
+            return left.City.Trim().Equals(right.City.Trim())
+                && left.CityAddress.Trim().Equals(right.CityAddress.Trim())
+                && left.State.Trim().Equals(right.State.Trim())
+                && left.ZipCode.Trim().Equals(right.ZipCode.Trim());
+        }
+
+        /// <summary>
+        /// Returns an address that has been formatted to have correcte appreviations, have the same spelling for standard 
+        /// </summary>
+        /// <returns></returns>
+        public string GetFormatedAddress()
+        {
+            string addy = FormatAddress(CityAddress);
+            return addy.Replace("\n", "").Replace("\r", "");
+        }
+
+        private static string FormatAddress(string address)
+        {
+            address = address.ToLower();
+            string result = "";
+            foreach (string addyItem in GetEachAddressItem(address))
+            {
+
+                result += AbbreviatedStreetNames(addyItem) + " ";
+            }
+
+            result = result.Trim();
+
+            return FirstCharUpperCase(ref result);
+        }
+
+        private static string FirstCharUpperCase(ref string address)
+        {
+            string eachString = "";
+            string[] addyArr = address.Split(' ');
+            foreach (string strAddy in addyArr)
+            {
+                if (strAddy.Trim().Length > 0)
+                    eachString += " " + char.ToUpper(strAddy[0]) + strAddy.Substring(1);
+            }
+
+            return eachString.Trim();
+        }
+
+        private static IEnumerable<string> Seperte(string address)
+        {
+
+            var words = new List<string> { string.Empty };
+            for (var i = 0; i < address.Length; i++)
+            {
+                words[words.Count - 1] += address[i];
+                if (i + 1 < address.Length && char.IsLetter(address[i]) != char.IsLetter(address[i + 1]))
+                {
+                    words.Add(string.Empty);
+                }
+            }
+            return words;
+
+        }
+
+        private static IEnumerable<string> GetEachAddressItem(string address)
+        {
+            string[] arr = address.Split(' ');
+            foreach (string addressItem in arr)
+            {
+                //If an address has the number and name stuck together, seperate them
+                char[] itemChar = addressItem.ToCharArray();
+                if (itemChar.HasBothIntChar())
+                {
+                    foreach (string seperateVale in Seperte(addressItem))
+                    {
+                        yield return seperateVale;
+                    }
+                }
+                else
+                {
+                    yield return addressItem;
+                }
+
+            }
+
+        }
+
+        private static string AbbreviatedStreetNames(string streetName)
+        {
+            if (streetName.Equals("DRIVE".ToLower()) ||
+                streetName.Equals("DRIV".ToLower()) || streetName.Equals("DRIV.".ToLower()) ||
+                streetName.Equals("DRV".ToLower()) || streetName.Equals("DRV.".ToLower()) ||
+                streetName.Equals("DR".ToLower()) || streetName.Equals("DR,".ToLower()))
+                streetName = "DR.".ToLower();
+
+            if (streetName.Equals("ST".ToLower()) || streetName.Equals("STREET".ToLower()) ||
+                streetName.Equals("STRT".ToLower()) || streetName.Equals("STRT.".ToLower()) ||
+                streetName.Equals("STR".ToLower()) || streetName.Equals("STR.".ToLower()))
+                streetName = "ST.".ToLower();
+
+            if (streetName.Equals("LN".ToLower()) || streetName.Equals("LANE".ToLower()))
+                streetName = "LN.".ToLower();
+
+            if (streetName.Equals("S".ToLower()) || streetName.Equals("S.".ToLower()) || streetName.Equals("SO.".ToLower()) || streetName.Equals("SO".ToLower()))
+                streetName = "South".ToLower();
+
+            if (streetName.Equals("N".ToLower()) || streetName.Equals("N.".ToLower()))
+                streetName = "North".ToLower();
+
+            if (streetName.Equals("E".ToLower()) || streetName.Equals("E.".ToLower()))
+                streetName = "East".ToLower();
+
+            if (streetName.Equals("W".ToLower()) || streetName.Equals("W.".ToLower()))
+                streetName = "West".ToLower();
+
+            if (streetName.Equals("CIR".ToLower()) || streetName.Equals("CIR.".ToLower()) ||
+                streetName.Equals("CIRC".ToLower()) || streetName.Equals("CIRC.".ToLower()) ||
+                streetName.Equals("CIRCL".ToLower()) || streetName.Equals("CIRCL.".ToLower()) ||
+                streetName.Equals("CRCL".ToLower()) || streetName.Equals("CRCL.".ToLower()) ||
+                streetName.Equals("CRCLE".ToLower()) || streetName.Equals("CRCLE.".ToLower()) ||
+                streetName.Equals("CIRCLE".ToLower()))
+            {
+                streetName = "Cir.".ToLower();
+            }
+
+            if (streetName.Equals("RD".ToLower()) || streetName.Equals("ROAD".ToLower()))
+                streetName = "RD.".ToLower();
+
+            if (streetName.Equals("AV".ToLower()) || streetName.Equals("AV.".ToLower()) ||
+                streetName.Equals("AVEN".ToLower()) || streetName.Equals("AVEN.".ToLower()) ||
+                streetName.Equals("AVENU".ToLower()) || streetName.Equals("AVENU.".ToLower()) ||
+                streetName.Equals("AVN".ToLower()) || streetName.Equals("AVN.".ToLower()) ||
+                streetName.Equals("AVNUE".ToLower()) || streetName.Equals("AVNUE.".ToLower()) ||
+                streetName.Equals("AVENUE.".ToLower()) || streetName.Equals("AVE".ToLower()))
+            {
+                streetName = "AVE.".ToLower();
+            }
+
+            if (streetName.Equals("CT".ToLower()) || streetName.Equals("COURT".ToLower()))
+                streetName = "CT.".ToLower();
+
+            if (streetName.Equals("Place".ToLower()) || streetName.Equals("PL".ToLower()))
+                streetName = "PL.".ToLower();
+
+            if (streetName.Equals("PKWY".ToLower()) || streetName.Equals("PKWY.".ToLower()) ||
+                streetName.Equals("PKWYS".ToLower()) || streetName.Equals("PKWYS.".ToLower()) ||
+                streetName.Equals("PARKWAYS".ToLower()))
+                streetName = "PKWY.".ToLower();
+
+            if (streetName.Equals("COVE".ToLower()) || streetName.Equals("COVE".ToLower()))
+                streetName = "CV.".ToLower();
+
+            if (streetName.Equals("BLVD".ToLower()) || streetName.Equals("BOUL".ToLower()) || streetName.Equals("BOULEVARD".ToLower()) || streetName.Equals("BOULV".ToLower()))
+                streetName = "BLVD.".ToLower();
+
+            return streetName;
         }
 
         public string CityAddress { set; get; }
@@ -448,9 +520,37 @@ namespace Donor
             return matchingAddress;
         }
 
+        public static Dictionary<string, Constituents> RemoveDublicates(this List<Constituents> constituents)
+        {
+            Dictionary<string, Constituents> consCharityBloom = new Dictionary<string, Constituents>();
+
+            foreach(Constituents cons in constituents)
+            {
+
+            }
+
+            return consCharityBloom;
+        }
+
         public static Dictionary<string, Constituents> GetConstituentDictionary(this List<Constituents> constituents)
         {
             return constituents.ToDictionary(c => c.GetAccountNumber());
+        }
+
+        public static Dictionary<string, Constituents> GetConstituentDictionaryCharityproud(this List<Constituents> constituents)
+        {
+            Dictionary<string, Constituents> consDictionary = new Dictionary<string, Constituents>();
+
+            foreach (Constituents con in constituents)
+            {
+                if (consDictionary.ContainsKey(con.GetAccountNumber()))
+                    continue;
+
+                consDictionary.Add(con.GetAccountNumber(), con);
+
+            }
+
+            return consDictionary;
         }
 
         /// <summary>
@@ -464,6 +564,21 @@ namespace Donor
             Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
 
             foreach(Transaction transactions in donation)
+            {
+                if (cons.ContainsKey(transactions.GetAccountNumber()))
+                {
+                    cons[transactions.GetAccountNumber()].AddTransaction(transactions);
+                }
+            }
+
+            return cons;
+        }
+
+        public static Dictionary<string, Constituents> AddCharityproudTransaction(this List<Constituents> constituents, ref List<Transaction> donation)
+        {
+            Dictionary<string, Constituents> cons = constituents.GetConstituentDictionaryCharityproud();
+
+            foreach (Transaction transactions in donation)
             {
                 if (cons.ContainsKey(transactions.GetAccountNumber()))
                 {

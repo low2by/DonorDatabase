@@ -20,7 +20,7 @@ namespace Donor
             List<Constituents> constituents = new List<Constituents>();
             List<Transaction> transactions = new List<Transaction>();
 
-            foreach (string file in Directory.EnumerateFiles(@"C:\Users\elotubai10\Desktop\donordatabase\", "*.xlsx"))
+            foreach (string file in Directory.EnumerateFiles(@"C:\Users\elotubai10\Desktop\charityproud\", "*.xlsx"))
             {
                 BloomerangColumnHeaderConstituents headerConstituents = new BloomerangColumnHeaderConstituents();
                 BloomerangColumnHeaderTransaction headerTransaction = new BloomerangColumnHeaderTransaction();
@@ -31,16 +31,15 @@ namespace Donor
                 GetExcelFile(ref filepath, ref constituents, ref transactions, ref headerConstituents, ref headerTransaction, ref headerCharityproud);
             }
 
-            Dictionary<string, Constituents> cons = constituents.DescendingOrderTotalDonations(ref transactions);
+            Dictionary<string, Constituents> cons = constituents.AddCharityproudTransaction(ref transactions);
+
+            Dictionary<string, Constituents> consOrder = constituents.DescendingOrderTotalDonations(ref transactions);
 
             WriteExcelFile(ref cons, "toalDonation" );
 
             Console.WriteLine("All Done");
             Console.Read();
         }
-
-
-
        
         public static void GetExcelFile(ref string filepath, ref List<Constituents> constituents, ref List<Transaction> transaction,
             ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction, ref CharityproudHeaderConstituents headerCharityproud)
@@ -57,7 +56,7 @@ namespace Donor
             int colCount = xlRange.Columns.Count;
 
             //this is for testing. delete leter
-            //rowCount = 60;
+            rowCount = 25;
 
 
             //iterate over the rows and columns and print to the console as it appears in the file
@@ -218,6 +217,14 @@ namespace Donor
             }
         }
 
+        /// <summary>
+        /// This is used to set the constituents
+        /// </summary>
+        /// <param name="constituents"></param>
+        /// <param name="i"></param>
+        /// <param name="xlRange"></param>
+        /// <param name="headerConstituents"></param>
+        /// <param name="headerTransaction"></param>
         private static void SetIndividualConstituentsFields(ref List<Constituents> constituents, ref int i, ref Excel.Range xlRange, ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction)
         {
             constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum, ref headerTransaction),
@@ -228,13 +235,24 @@ namespace Donor
 
         }
 
+        /// <summary>
+        /// This is used to set the transaction and the transaction of the chairity proud database for donors
+        /// </summary>
+        /// <param name="constituents"></param>
+        /// <param name="transactions"></param>
+        /// <param name="i"></param>
+        /// <param name="xlRange"></param>
+        /// <param name="headerCharityproud"></param>
+        /// <param name="headerTransaction"></param>
         private static void SetCharityConstituentsTransaction(List<Constituents> constituents, List<Transaction> transactions,ref int i, ref Excel.Range xlRange, CharityproudHeaderConstituents headerCharityproud, BloomerangColumnHeaderTransaction headerTransaction)
         {
+            // Constituents(string _accountNumber, string _name, string _address1, string _address2, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type)
+
             constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum, ref headerTransaction),
                GetFieldValue(ref i, ref xlRange, headerCharityproud.NameColNum, ref headerTransaction),
-               GetFieldValue(ref i, ref xlRange, headerCharityproud.CityColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.CityColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.StateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.ZipCodeColNum, ref headerTransaction),
-               GetFieldValue(ref i, ref xlRange, headerCharityproud.PhoneColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.EmailColNum, ref headerTransaction),
-               GetFieldValue(ref i, ref xlRange, headerCharityproud.TypeColNum, ref headerTransaction)));
+               GetFieldValue(ref i, ref xlRange, headerCharityproud.AddressLine1, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.AddressLine2, ref headerTransaction),
+               GetFieldValue(ref i, ref xlRange, headerCharityproud.CityColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.StateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.ZipCodeColNum, ref headerTransaction), 
+               GetFieldValue(ref i, ref xlRange, headerCharityproud.PhoneColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.EmailColNum, ref headerTransaction)));
 
             transactions.Add(new Transaction(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.NameColNum, ref headerTransaction),
                 GetFieldValue(ref i, ref xlRange, headerCharityproud.DateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.CampaignColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.MiniCampaignColNum, ref headerTransaction),
@@ -242,6 +260,13 @@ namespace Donor
                   GetFieldValue(ref i, ref xlRange, headerCharityproud.AmountColNum, ref headerTransaction)));
         }
 
+        /// <summary>
+        /// This is used to set the transactions from the bloomarang database
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="i"></param>
+        /// <param name="xlRange"></param>
+        /// <param name="headerTransaction"></param>
         private static void SetTransactions(List<Transaction> transaction, ref int i, ref Excel.Range xlRange, BloomerangColumnHeaderTransaction headerTransaction)
         {
             //do this so we can begin the row at 3
@@ -251,6 +276,14 @@ namespace Donor
                   GetFieldValue(ref i, ref xlRange, headerTransaction.AmountColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.MarketValueColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerTransaction.InKindDescrColNum, ref headerTransaction)));
         }
 
+        /// <summary>
+        /// This method gets the content of each field. The name, address, transaction ect... using the index of the headers
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="xlRange"></param>
+        /// <param name="_colNum"></param>
+        /// <param name="headerTransaction"></param>
+        /// <returns>The content of the item in the row and col</returns>
         private static string GetFieldValue(ref int i, ref Excel.Range xlRange, int _colNum, ref BloomerangColumnHeaderTransaction headerTransaction)
         {
             string name = "";
@@ -263,7 +296,10 @@ namespace Donor
                 //name = xlRange.Cells[i, colNum].Value2.ToString();
                 if (colNum == headerTransaction.DateColNum)
                 {
+                    //the date format when parsed to a double comes out as a whole number representing the days since the time was started for computers
                     double.TryParse(xlRange.Cells[i, colNum].Value2.ToString(), out double tmp);
+
+                    //we get the date as a double and format it to a m/d/y
                     date = DateTime.FromOADate(tmp);
                     dateFormat = date.GetDateTimeFormats();
                     name = dateFormat[0];
@@ -279,8 +315,6 @@ namespace Donor
             return name;
         }
 
-
-
         private static void GetHeader(ref int colCount, ref Excel.Range xlRange, ref int i, ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction, ref CharityproudHeaderConstituents headerCharityproud)
         {
             string headerName;
@@ -294,13 +328,20 @@ namespace Donor
                     headerName = xlRange.Cells[i, j].Value2.ToString();
                     headerName = headerName.Trim().ToLower();
                     AssignHeaderCol(ref headerName, ref j, ref headerConstituents, ref headerTransaction, ref headerCharityproud);
-                    //Console.Write("\r\n");
 
                 }
 
             }
         }
 
+        /// <summary>
+        /// This method assigns the column header number/index from the excel file and assigns it to either the constituents index or the transaction index.
+        /// </summary>
+        /// <param name="headerName"></param>
+        /// <param name="j"></param>
+        /// <param name="headerConstituents"></param>
+        /// <param name="headerTransaction"></param>
+        /// <param name="headerCharityproud"></param>
         private static void AssignHeaderCol(ref string headerName, ref int j, ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction, ref CharityproudHeaderConstituents headerCharityproud)
         {
 
@@ -503,53 +544,202 @@ namespace Donor
 
     public class BloomerangColumnHeaderConstituents
     {
+        /// <summary>
+        /// The name of a constituent. It can have a first and/or a last name 
+        /// </summary>
         public int NameColNum { get; set; }
+
+        /// <summary>
+        /// The first name of the constituent
+        /// </summary>
         public int FirstNameColNum { get; set; }
+
+        /// <summary>
+        /// The last name of the constitunet
+        /// </summary>
         public int LastNameColNum { get; set; }
+        
+        /// <summary>
+        /// The account number of the constituent
+        /// </summary>
         public int AccountNumColNum { get; set; }
+        
+        /// <summary>
+        /// The street address of the constituent resident
+        /// </summary>
         public int CityAddressColNum { get; set; }
+       
+        /// <summary>
+        /// The city of the constituent resident
+        /// </summary>
         public int CityColNum { get; set; }
+        
+        /// <summary>
+        /// The state of the constituent resident
+        /// </summary>
         public int StateColNum { get; set; }
+       
+        /// <summary>
+        /// The sip code of the consituents resident
+        /// </summary>
         public int ZipCodeColNum { get; set; }
+       
+        /// <summary>
+        /// The email of the constituent
+        /// </summary>
         public int EmailColNum { get; set; }
+
+        /// <summary>
+        /// The type of constitunet it is. An orginization or an individual constituents
+        /// </summary>
         public int TypeColNum { get; set; }
+
+        /// <summary>
+        /// The constitunets phone number
+        /// </summary>
         public int PhoneColNum { get; set; }
 
     }
 
     public class BloomerangColumnHeaderTransaction
     {
+        /// <summary>
+        /// The name of a constituent. It can have a first and/or a last name 
+        /// </summary>
         public int NameColNum { get; set; }
+
+        /// <summary>
+        /// The date is the day a transaction was given
+        /// </summary>
         public int DateColNum { get; set; }
+
+        /// <summary>
+        /// The campaign that the transaction happened in
+        /// </summary>
         public int CampaignColNum { get; set; }
+
+        /// <summary>
+        /// The mini-campaign with the campaing that the transaction happened in
+        /// </summary>
         public int MiniCampaignColNum { get; set; }
+
+        /// <summary>
+        /// The fund (fundraiser) where the transaction happened
+        /// </summary>
         public int FundColNum { get; set; }
+
+        /// <summary>
+        /// The type of transaction. Reoccuring or just a one time donation
+        /// </summary>
         public int TypeColNum { get; set; }
+
+        /// <summary>
+        /// How the transaction was given. credit card, check, in-kind, cash, EFT ect...
+        /// </summary>
         public int MethodColNum { get; set; }
+
+        /// <summary>
+        /// The amount that was given in a transaction
+        /// </summary>
         public int AmountColNum { get; set; }
+
+        /// <summary>
+        /// the amount that is represented by the in-kind donation
+        /// </summary>
         public int MarketValueColNum { get; set; }
+
+        /// <summary>
+        /// Describe what was givin in the in-kind transaction 
+        /// </summary>
         public int InKindDescrColNum { get; set; }
+
+        /// <summary>
+        /// The account number for the constituent 
+        /// </summary>
         public int AccountNumberColNum { get; set; }
 
     }
 
     public class CharityproudHeaderConstituents
     {
+        /// <summary>
+        /// The constituents acount number
+        /// </summary>
         public int AccountNumberColNum { get; set; }
+
+        /// <summary>
+        /// The constituents name. It has first and/or last name
+        /// </summary>
         public int NameColNum { get; set; }
+
+        /// <summary>
+        /// The address for the constituent
+        /// </summary>
         public int AddressLine1 { get; set; }
+
+        /// <summary>
+        /// the apt number, suit, campus building ect... that comes with the address
+        /// </summary>
         public int AddressLine2 { get; set; }
+
+        /// <summary>
+        /// The city that the constituent's resident
+        /// </summary>
         public int CityColNum { get; set; }
+
+        /// <summary>
+        /// The state that the constituent's resident
+        /// </summary>
         public int StateColNum { get; set; }
+
+        /// <summary>
+        /// The zip code that the constituent's resident
+        /// </summary>
         public int ZipCodeColNum { get; set; }
+
+        /// <summary>
+        /// The constituent's phone number
+        /// </summary>
         public int PhoneColNum { get; set; }
+
+        /// <summary>
+        /// The constituent's phone email
+        /// </summary>
         public int EmailColNum { get; set; }
+
+        /// <summary>
+        /// The date the transaction was recieved
+        /// </summary>
         public int DateColNum { get; set; }
+
+        /// <summary>
+        /// The campaign that the transaction happened in
+        /// </summary>
         public int CampaignColNum { get; set; }
+
+        /// <summary>
+        /// The mini-campaign with the campaing that the transaction happened in
+        /// </summary>
         public int MiniCampaignColNum { get; set; }
+
+        /// <summary>
+        /// The fund (fundraiser) where the transaction happened
+        /// </summary>
         public int FundColNum { get; set; }
+
+        /// <summary>
+        /// The type of transaction. Reoccuring or just a one time donation
+        /// </summary>
         public int TypeColNum { get; set; }
+
+        /// <summary>
+        /// The amount that was given in a transaction
+        /// </summary>
         public int AmountColNum { get; set; }
+
+        /// <summary>
+        /// How the transaction was given. credit card, check, in-kind, cash, EFT ect...
+        /// </summary>
         public int MethodColNum { get; set; }
 
     }
