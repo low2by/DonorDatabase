@@ -14,14 +14,16 @@ namespace Donor
         private BillingAddress billingAddress;
         private string accountNumber;
         private string typeOfConstituent;
+        private string createdDate;
 
 
-        public Constituents(string _accountNumber, string _name, string _lastName, string _firstName, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type)
+        public Constituents(string _accountNumber, string _name, string _lastName, string _firstName, string _address, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type, string _createdDate)
         {
             this.accountNumber = _accountNumber;
             this.typeOfConstituent = _type;
+            this.createdDate = _createdDate;
             this.contactInformation = new ContactInformation(_name, _lastName, _firstName, _email, _phoneNumber);
-            this.billingAddress = new BillingAddress( _address, _city, _state, _zipCode);
+            this.billingAddress = new BillingAddress(_address, _city, _state, _zipCode);
             this.transactions = new List<Transaction>();
         }
 
@@ -29,6 +31,7 @@ namespace Donor
         {
             this.accountNumber = _accountNumber;
             this.typeOfConstituent = " ";
+            createdDate = " ";
             this.contactInformation = new ContactInformation(_name, _email, _phoneNumber);
             this.billingAddress = new BillingAddress(_address1, _address2, _city, _state, _zipCode);
             this.transactions = new List<Transaction>();
@@ -38,7 +41,7 @@ namespace Donor
         {
             double total = 0.0;
 
-            foreach(Transaction trans in GetTransactions())
+            foreach (Transaction trans in GetTransactions())
             {
                 total += trans.Amount;
             }
@@ -57,15 +60,29 @@ namespace Donor
             return transactions;
         }
 
+        public bool HasTransactions()
+        {
+            return transactions.Count == 0;
+        }
+
         public string GetAccountNumber()
         {
             return accountNumber;
         }
 
+        public string GetCreatedDate()
+        {
+            return createdDate;
+        }
+
+        public bool HasCreatedDate()
+        {
+            return createdDate.Trim().Count() == 0;
+        }
 
         public bool HasAccountNumber()
         {
-            return accountNumber.Trim().Count() > 0;
+            return accountNumber.Trim().Count() == 0;
         }
 
         public string GetName()
@@ -75,7 +92,7 @@ namespace Donor
 
         public bool HasName()
         {
-            return contactInformation.Name().Trim().Count() > 0;
+            return contactInformation.Name().Count() == 0;
         }
 
         public string GetTypeOfConstituent()
@@ -85,10 +102,8 @@ namespace Donor
 
         public bool HasTypeOfConstituent()
         {
-            return typeOfConstituent.Trim().Count() > 0;
+            return typeOfConstituent.Trim().Count() == 0;
         }
-
-
 
         public string GetAddress()
         {
@@ -97,7 +112,7 @@ namespace Donor
 
         public bool HasAddress()
         {
-            return billingAddress.CityAddress.Trim().Count() > 0;
+            return billingAddress.CityAddress.Trim().Count() == 0;
         }
 
         public string GetState()
@@ -107,7 +122,7 @@ namespace Donor
 
         public bool HasState()
         {
-            return billingAddress.State.Trim().Count() > 0;
+            return billingAddress.State.Trim().Count() == 0;
         }
 
         public string GetCity()
@@ -117,7 +132,7 @@ namespace Donor
 
         public bool HasCity()
         {
-            return billingAddress.City.Trim().Count() > 0;
+            return billingAddress.City.Trim().Count() == 0;
         }
 
         public string GetZipCode()
@@ -131,7 +146,7 @@ namespace Donor
 
         public bool HasZipCode()
         {
-            return billingAddress.ZipCode.Trim().Count() > 0;
+            return billingAddress.ZipCode.Trim().Count() == 0;
         }
 
         public string GetLastName()
@@ -141,7 +156,7 @@ namespace Donor
 
         public bool HasLastName()
         {
-            return contactInformation.LastName().Trim().Count() > 0;
+            return contactInformation.LastName().Trim().Count() == 0;
         }
 
         public string GetFirstName()
@@ -151,7 +166,7 @@ namespace Donor
 
         public bool HasFirstName()
         {
-            return contactInformation.FirstName().Trim().Count() > 0;
+            return contactInformation.FirstName().Trim().Count() == 0;
         }
 
         public string GetEmail()
@@ -161,7 +176,7 @@ namespace Donor
 
         public bool HasEmail()
         {
-            return contactInformation.Email().Trim().Count() > 0;
+            return contactInformation.Email().Trim().Count() == 0;
         }
 
         public string GetPhoneNumber()
@@ -171,7 +186,7 @@ namespace Donor
 
         public bool HasPhoneNumber()
         {
-            return contactInformation.PhoneNumber().Trim().Count() > 0;
+            return contactInformation.PhoneNumber().Trim().Count() == 0;
         }
 
     }
@@ -215,7 +230,7 @@ namespace Donor
         {
             return name;
         }
-        public string LastName() 
+        public string LastName()
         {
             return lastName;
         }
@@ -227,8 +242,9 @@ namespace Donor
         {
             return email;
         }
-        public string PhoneNumber(){
-            return phoneNumber; 
+        public string PhoneNumber()
+        {
+            return phoneNumber;
         }
     }
 
@@ -253,13 +269,13 @@ namespace Donor
         public bool IsMatchingBillingAddress(ref BillingAddress left, ref BillingAddress right)
         {
             return left.City.Trim().Equals(right.City.Trim())
-                && left.CityAddress.Trim().Equals(right.CityAddress.Trim())
+                && left.GetFormatedAddress().Trim().Equals(right.GetFormatedAddress().Trim())
                 && left.State.Trim().Equals(right.State.Trim())
                 && left.ZipCode.Trim().Equals(right.ZipCode.Trim());
         }
 
         /// <summary>
-        /// Returns an address that has been formatted to have correcte appreviations, have the same spelling for standard 
+        /// Returns an address that has been formatted to have correcte appreviations, have the same spelling for standard address
         /// </summary>
         /// <returns></returns>
         public string GetFormatedAddress()
@@ -424,7 +440,7 @@ namespace Donor
             bool intItem = false;
             bool charItem = false;
 
-            foreach(char item in arr)
+            foreach (char item in arr)
             {
                 if (int.TryParse(item.ToString(), out int holder))
                     intItem = true;
@@ -524,7 +540,7 @@ namespace Donor
         {
             Dictionary<string, Constituents> consCharityBloom = new Dictionary<string, Constituents>();
 
-            foreach(Constituents cons in constituents)
+            foreach (Constituents cons in constituents)
             {
 
             }
@@ -547,7 +563,6 @@ namespace Donor
                     continue;
 
                 consDictionary.Add(con.GetAccountNumber(), con);
-
             }
 
             return consDictionary;
@@ -559,34 +574,71 @@ namespace Donor
         /// <param name="constituents"></param>
         /// <param name="donation"></param>
         /// <returns></returns>
-        public static Dictionary<string, Constituents> AddTransaction(this List<Constituents> constituents, ref List<Transaction>  donation)
+        public static Dictionary<string, Constituents> AddTransaction(this Dictionary<string, Constituents> constituents, ref List<Transaction> donation)
         {
-            Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
-
-            foreach(Transaction transactions in donation)
-            {
-                if (cons.ContainsKey(transactions.GetAccountNumber()))
-                {
-                    cons[transactions.GetAccountNumber()].AddTransaction(transactions);
-                }
-            }
-
-            return cons;
-        }
-
-        public static Dictionary<string, Constituents> AddCharityproudTransaction(this List<Constituents> constituents, ref List<Transaction> donation)
-        {
-            Dictionary<string, Constituents> cons = constituents.GetConstituentDictionaryCharityproud();
+            //Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
 
             foreach (Transaction transactions in donation)
             {
-                if (cons.ContainsKey(transactions.GetAccountNumber()))
+                if (constituents.ContainsKey(transactions.GetAccountNumber()))
                 {
-                    cons[transactions.GetAccountNumber()].AddTransaction(transactions);
+                    constituents[transactions.GetAccountNumber()].AddTransaction(transactions);
                 }
             }
 
-            return cons;
+            return constituents;
+        }
+
+        /// <summary>
+        /// Combines the data from charity proud and Bloomarang
+        /// </summary>
+        /// <param name="constituents"></param>
+        /// <returns></returns>
+        public static Dictionary<string, Constituents> CombineCharityBloomarang(this Dictionary<string, Constituents> constituents)
+        {
+            //how to combine the data
+            //not the names: people could have the same name
+            Dictionary<string, Constituents> charityBloomarang = new Dictionary<string, Constituents>();
+
+            return charityBloomarang;
+
+        }
+
+        /// <summary>
+        /// This method removes dublicates from the bloomerang data. Dublicates are accounts with the same name but one of the accounts is missing
+        /// an attribute
+        /// </summary>
+        /// <param name="constituents"></param>
+        /// <returns></returns>
+        public static Dictionary<string, Constituents> RemoveDublicates(this Dictionary<string, Constituents> constituents)
+        {
+
+            Dictionary<string, Constituents> nonDubCons = new Dictionary<string, Constituents>();
+            Dictionary<string, Constituents> removedDubCons = new Dictionary<string, Constituents>();
+
+            //make a list. this list will help us remove constituents that we belive are dublicates
+            //List<Constituents> cons = new List<Constituents>(constituents.Values.ToList());
+
+            //two foreach loops
+            //the first loop gets the cons
+            //in the second foreach loop, we get a consCompare. this will be from the constituents dictionary list
+            //we compare the cons and consCompare if the names match (last and first name)
+            //if the names match, we compare the attributes and see which attribute they do not have
+            //check which one has the most attributes and add the missing attribute to it
+            //add the new cons with the most attributes and the new added one and put it in the nonDubCons list
+            //if the con is not in the removed list add the con 
+            foreach (KeyValuePair<string, Constituents> cons in constituents)
+            {
+                foreach (KeyValuePair<string, Constituents> consCompare in constituents)
+                {
+                    if (cons.Value.GetName().Equals(consCompare.Value.GetName()))
+                    {
+
+                    }
+                }
+            }
+
+            return nonDubCons;
         }
 
         /// <summary>
@@ -595,19 +647,18 @@ namespace Donor
         /// <param name="constituents"></param>
         /// <param name="transactions"></param>
         /// <returns></returns>
-        public static Dictionary<string, Constituents> GetTopConstituents(this List<Constituents> constituents, ref List<Transaction> transactions)
+        public static Dictionary<string, Constituents> GetTopConstituents(this Dictionary<string, Constituents> constituents, ref List<Transaction> transactions)
         {
-            List<Constituents> listCons = new List<Constituents>();
-            Dictionary<string, Constituents> cons = constituents.GetConstituentDictionary();
+            Dictionary<string, Constituents> listCons = new Dictionary<string, Constituents>();
 
             foreach (Transaction trans in transactions)
             {
-                if (cons.ContainsKey(trans.GetAccountNumber()))
+                if (constituents.ContainsKey(trans.GetAccountNumber()))
                 {
-                    listCons.Add(cons[trans.GetAccountNumber()]);
+                    listCons.Add(constituents[trans.GetAccountNumber()].GetAccountNumber(), constituents[trans.GetAccountNumber()]);
                 }
             }
-            
+
             return listCons.AddTransaction(ref transactions);
         }
 
@@ -622,7 +673,7 @@ namespace Donor
         public static Dictionary<string, Constituents> GetConstituentsWithNameDate(this List<Constituents> constituents, ref List<Transaction> transaction, ref string lookUp, ref int date)
         {
             //Console.WriteLine("Getting Constitunets with WoodBury names and email");
-            List<Constituents> conList = new List<Constituents>();
+            Dictionary<string, Constituents> conList = new Dictionary<string, Constituents>();
             List<Transaction> transList = new List<Transaction>();
 
             string[] dateArray;
@@ -633,7 +684,7 @@ namespace Donor
                     || cons.GetFirstName().ToLower().Contains(lookUp) || cons.GetEmail().ToLower().Contains(lookUp))
                 {
 
-                    conList.Add(cons);
+                    conList.Add(cons.GetAccountNumber(), cons);
                 }
             }
 
@@ -658,7 +709,7 @@ namespace Donor
         /// <param name="constituents"></param>
         /// <param name="transaction"></param>
         /// <returns>Returns a Dictionary of constituents with only one transaction</returns>
-        public static Dictionary<string, Constituents> DescendingOrderDonations(this List<Constituents> constituents, ref List<Transaction> transaction)
+        public static Dictionary<string, Constituents> DescendingOrderDonations(this Dictionary<string, Constituents> constituents, ref List<Transaction> transaction)
         {
             List<Transaction> orderedAmount = transaction.OrderByDescending(a => a.Amount).ToList();
             Dictionary<string, Transaction> orderedAmountDic = new Dictionary<string, Transaction>();
@@ -682,14 +733,72 @@ namespace Donor
         /// <param name="constituents"></param>
         /// <param name="transaction"></param>
         /// <returns>Returns a Dictionary of constituents with only one transaction</returns>
-        public static Dictionary<string, Constituents> DescendingOrderTotalDonations(this List<Constituents> constituents, ref List<Transaction> transaction)
+        public static Dictionary<string, Constituents> DescendingOrderTotalDonations(this Dictionary<string, Constituents> constituents, ref List<Transaction> transaction)
         {
-            Dictionary<string, Constituents>  cons = constituents.AddTransaction(ref transaction);
+            Dictionary<string, Constituents> cons = constituents.AddTransaction(ref transaction);
             List<Constituents> consList = cons.Values.ToList();
             List<Constituents> orderedAmount = consList.OrderByDescending(a => a.TotalDonation()).ToList();
             return orderedAmount.ToDictionary(c => c.GetAccountNumber());
         }
 
+        public static Dictionary<string, Constituents> MatchingNames(this Dictionary<string, Constituents> constituents)
+        {
+            //constituents with the same name
+            Dictionary<string, Constituents> matchnames = new Dictionary<string, Constituents>();
+            foreach (KeyValuePair<string, Constituents> cons in constituents)
+            {
+                //not everyone will have a first and last name
+                if (cons.Value.GetLastName().Trim().Count() == 0 && cons.Value.GetFirstName().Trim().Count() == 0 || cons.Value.GetTypeOfConstituent().ToLower().Equals("orginization"))
+                    continue;
+
+                if (cons.Value.GetTypeOfConstituent().Trim().ToLower().Equals("organization"))
+                    continue;
+
+                if (cons.Value.GetName().Trim().ToLower().Contains("anonymous"))
+                    continue;
+
+
+                foreach (KeyValuePair<string, Constituents> consCompare in constituents)
+                {
+
+                    if (consCompare.Value.GetLastName().Trim().Count() == 0 && consCompare.Value.GetFirstName().Trim().Count() == 0 || consCompare.Value.GetTypeOfConstituent().Equals("Orginization"))
+                        continue;
+
+                    if (consCompare.Value.GetTypeOfConstituent().Trim().ToLower().Equals("organization"))
+                        continue;
+
+                    if (consCompare.Value.GetName().Trim().ToLower().Contains("anonymous"))
+                        continue;
+
+                    //check that we do not have the consCompare in the matchnames
+                    //then compare that the last and first name match
+                    if (cons.Key != consCompare.Key && cons.Value.GetFirstName().Equals(consCompare.Value.GetFirstName()) && cons.Value.GetLastName().Equals(consCompare.Value.GetLastName()))
+                    {
+                        //add this constituent
+                        if (!matchnames.ContainsKey(cons.Key) && !matchnames.ContainsKey(consCompare.Key))
+                        {
+                            //if the consCompare doesnt have an address or that the address is different, continue
+                            if (consCompare.Value.GetAddress().Trim().Count() == 0 || consCompare.Value.GetAddress().Equals(cons.Value.GetAddress()))
+                            {
+                                matchnames.Add(consCompare.Key, consCompare.Value);
+                                matchnames.Add(cons.Key, cons.Value);
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+            return matchnames;
+        }
+
+
+        public static Dictionary<string, Constituents> Update(this Dictionary<string, Constituents> constituents, ref Dictionary<string, Constituents> matchingNames, out Dictionary<string, Constituents> removeDubCons)
+        {
+            //go through the matching names dictionary
+            //check the date 
+        }
 
     }
 

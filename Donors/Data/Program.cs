@@ -17,10 +17,10 @@ namespace Donor
         static void Main(string[] args)
         {
 
-            List<Constituents> constituents = new List<Constituents>();
+            Dictionary<string, Constituents> constituents = new Dictionary<string, Constituents>();
             List<Transaction> transactions = new List<Transaction>();
 
-            foreach (string file in Directory.EnumerateFiles(@"C:\Users\elotubai10\Desktop\charityproud\", "*.xlsx"))
+            foreach (string file in Directory.EnumerateFiles(@"C:\Users\elotubai10\Desktop\donordatabase\", "*.xlsx"))
             {
                 BloomerangColumnHeaderConstituents headerConstituents = new BloomerangColumnHeaderConstituents();
                 BloomerangColumnHeaderTransaction headerTransaction = new BloomerangColumnHeaderTransaction();
@@ -31,21 +31,32 @@ namespace Donor
                 GetExcelFile(ref filepath, ref constituents, ref transactions, ref headerConstituents, ref headerTransaction, ref headerCharityproud);
             }
 
-            Dictionary<string, Constituents> cons = constituents.AddCharityproudTransaction(ref transactions);
 
-            Dictionary<string, Constituents> consOrder = constituents.DescendingOrderTotalDonations(ref transactions);
+            //get the constituents with match names
+            Dictionary<string, Constituents> matchingnames = new Dictionary<string, Constituents>(constituents.MatchingNames());
 
-            WriteExcelFile(ref cons, "toalDonation" );
+            Dictionary<string, Constituents> matchingnamesWithTrans = matchingnames.AddTransaction(ref transactions);
 
-            Console.WriteLine("All Done");
+            //compare dates, the most recent date with a matching name 
+            //foreach (KeyValuePair<string, Constituents> cons in matchingnames)
+            //{
+
+            //}
+
+            //Dictionary<string, Constituents> consWithTransactions = constituents.AddTransaction(ref transactions);
+
+            //Dictionary<string, Constituents> combinedCharityBloomarang = constituents.CombineCharityBloomarang();
+            WriteExcelFile(ref matchingnames, "matching names");
+
+            Console.WriteLine("All Done *Zara's voice*");
             Console.Read();
         }
-       
-        public static void GetExcelFile(ref string filepath, ref List<Constituents> constituents, ref List<Transaction> transaction,
+
+        public static void GetExcelFile(ref string filepath, ref Dictionary<string, Constituents> constituents, ref List<Transaction> transaction,
             ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction, ref CharityproudHeaderConstituents headerCharityproud)
         {
 
-            Console.WriteLine("Getting File");
+            Console.WriteLine("Getting data from file: " + filepath);
             //Create COM Objects. Create a COM object for everything that is referenced
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(filepath);
@@ -56,7 +67,7 @@ namespace Donor
             int colCount = xlRange.Columns.Count;
 
             //this is for testing. delete leter
-            rowCount = 25;
+            rowCount = 10;
 
 
             //iterate over the rows and columns and print to the console as it appears in the file
@@ -80,8 +91,8 @@ namespace Donor
                     SetIndividualConstituentsFields(ref constituents, ref i, ref xlRange, ref headerConstituents, ref headerTransaction);
                     Console.WriteLine("Constituent: \t" + i);
                 }
-                
-                if(headerTransaction.AmountColNum != 0 && headerCharityproud.AddressLine1 == 0)
+
+                if (headerTransaction.AmountColNum != 0 && headerCharityproud.AddressLine1 == 0)
                 {
                     if (i < 3)
                         continue;
@@ -90,12 +101,13 @@ namespace Donor
                     SetTransactions(transaction, ref i, ref xlRange, headerTransaction);
                     Console.WriteLine("Transaction: \t" + i);
                 }
-                    
-                
 
-                if(headerCharityproud.AddressLine1 != 0 && headerCharityproud.AddressLine2 != 0)
+
+
+                if (headerCharityproud.AddressLine1 != 0 && headerCharityproud.AddressLine2 != 0)
                 {
-                    SetCharityConstituentsTransaction(constituents, transaction, ref i, ref xlRange, headerCharityproud, headerTransaction);
+                    SetCharityConstituentsTransaction(ref constituents, ref transaction, ref i, ref xlRange, ref headerCharityproud, ref headerTransaction);
+                    Console.WriteLine("Constituent with Transaction: \t" + i);
                 }
 
                 //Console.WriteLine("At row : " + i");
@@ -159,7 +171,7 @@ namespace Donor
                 int row = 2;
                 int consNum = 1, transNum = 0;
                 bool addRow;
-                foreach(KeyValuePair<string, Constituents> cons in constitunets)
+                foreach (KeyValuePair<string, Constituents> cons in constitunets)
                 {
                     xlRange.Cells[row, 1] = cons.Value.GetAccountNumber();
                     xlRange.Cells[row, 2] = cons.Value.GetName();
@@ -177,7 +189,7 @@ namespace Donor
                     Console.WriteLine("Constituent: " + consNum + " of " + constitunets.Count);
 
                     addRow = true;
-                    foreach(Transaction trans in cons.Value.GetTransactions())
+                    foreach (Transaction trans in cons.Value.GetTransactions())
                     {
                         transNum += 1;
                         xlRange.Cells[row, 12] = trans.DonationDate;
@@ -203,7 +215,7 @@ namespace Donor
                 }
 
                 excelApp.DisplayAlerts = false;
-                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabaseresult\"+ filename+".xls", Excel.XlFileFormat.xlWorkbookNormal);
+                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabaseresult\" + filename + ".xls", Excel.XlFileFormat.xlWorkbookNormal);
                 excelApp.DisplayAlerts = true;
 
                 excelWorkbook.Close();
@@ -225,13 +237,18 @@ namespace Donor
         /// <param name="xlRange"></param>
         /// <param name="headerConstituents"></param>
         /// <param name="headerTransaction"></param>
-        private static void SetIndividualConstituentsFields(ref List<Constituents> constituents, ref int i, ref Excel.Range xlRange, ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction)
+        private static void SetIndividualConstituentsFields(ref Dictionary<string, Constituents> constituents, ref int i, ref Excel.Range xlRange, ref BloomerangColumnHeaderConstituents headerConstituents, ref BloomerangColumnHeaderTransaction headerTransaction)
         {
-            constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum, ref headerTransaction),
-                GetFieldValue(ref i, ref xlRange, headerConstituents.NameColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.LastNameColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.FirstNameColNum, ref headerTransaction),
-                GetFieldValue(ref i, ref xlRange, headerConstituents.CityAddressColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.CityColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.StateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.ZipCodeColNum, ref headerTransaction),
-                GetFieldValue(ref i, ref xlRange, headerConstituents.PhoneColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.EmailColNum, ref headerTransaction),
-                GetFieldValue(ref i, ref xlRange, headerConstituents.TypeColNum, ref headerTransaction)));
+            //changing the implementation of adding constituents. us a dictionary to add the constituents so we can check if we already have a constituent.
+            if (!constituents.ContainsKey(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum, ref headerTransaction)))
+            {
+                constituents.Add(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum, ref headerTransaction), new Constituents(GetFieldValue(ref i, ref xlRange, headerConstituents.AccountNumColNum, ref headerTransaction),
+                                GetFieldValue(ref i, ref xlRange, headerConstituents.NameColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.LastNameColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.FirstNameColNum, ref headerTransaction),
+                                GetFieldValue(ref i, ref xlRange, headerConstituents.CityAddressColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.CityColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.StateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.ZipCodeColNum, ref headerTransaction),
+                                GetFieldValue(ref i, ref xlRange, headerConstituents.PhoneColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.EmailColNum, ref headerTransaction),
+                                GetFieldValue(ref i, ref xlRange, headerConstituents.TypeColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerConstituents.CreatedDate, ref headerTransaction)));
+            }
+
 
         }
 
@@ -244,15 +261,19 @@ namespace Donor
         /// <param name="xlRange"></param>
         /// <param name="headerCharityproud"></param>
         /// <param name="headerTransaction"></param>
-        private static void SetCharityConstituentsTransaction(List<Constituents> constituents, List<Transaction> transactions,ref int i, ref Excel.Range xlRange, CharityproudHeaderConstituents headerCharityproud, BloomerangColumnHeaderTransaction headerTransaction)
+        private static void SetCharityConstituentsTransaction(ref Dictionary<string, Constituents> constituents, ref List<Transaction> transactions, ref int i, ref Excel.Range xlRange, ref CharityproudHeaderConstituents headerCharityproud, ref BloomerangColumnHeaderTransaction headerTransaction)
         {
             // Constituents(string _accountNumber, string _name, string _address1, string _address2, string _city, string _state, string _zipCode, string _phoneNumber, string _email, string _type)
 
-            constituents.Add(new Constituents(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum, ref headerTransaction),
-               GetFieldValue(ref i, ref xlRange, headerCharityproud.NameColNum, ref headerTransaction),
-               GetFieldValue(ref i, ref xlRange, headerCharityproud.AddressLine1, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.AddressLine2, ref headerTransaction),
-               GetFieldValue(ref i, ref xlRange, headerCharityproud.CityColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.StateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.ZipCodeColNum, ref headerTransaction), 
-               GetFieldValue(ref i, ref xlRange, headerCharityproud.PhoneColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.EmailColNum, ref headerTransaction)));
+            if (!constituents.ContainsKey(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum, ref headerTransaction)))
+            {
+                constituents.Add(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum, ref headerTransaction), new Constituents(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum, ref headerTransaction),
+                                GetFieldValue(ref i, ref xlRange, headerCharityproud.NameColNum, ref headerTransaction),
+                                GetFieldValue(ref i, ref xlRange, headerCharityproud.AddressLine1, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.AddressLine2, ref headerTransaction),
+                                GetFieldValue(ref i, ref xlRange, headerCharityproud.CityColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.StateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.ZipCodeColNum, ref headerTransaction),
+                                GetFieldValue(ref i, ref xlRange, headerCharityproud.PhoneColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.EmailColNum, ref headerTransaction)));
+
+            }
 
             transactions.Add(new Transaction(GetFieldValue(ref i, ref xlRange, headerCharityproud.AccountNumberColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.NameColNum, ref headerTransaction),
                 GetFieldValue(ref i, ref xlRange, headerCharityproud.DateColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.CampaignColNum, ref headerTransaction), GetFieldValue(ref i, ref xlRange, headerCharityproud.MiniCampaignColNum, ref headerTransaction),
@@ -398,6 +419,11 @@ namespace Donor
             if (headerName.Contains("primary") && headerName.Contains("phone") && headerName.Contains("number"))
             {
                 headerConstituents.PhoneColNum = j;
+            }
+
+            if (headerName.Contains("created") && headerName.Contains("date"))
+            {
+                headerConstituents.CreatedDate = j;
             }
 
             //for transactions
@@ -558,32 +584,32 @@ namespace Donor
         /// The last name of the constitunet
         /// </summary>
         public int LastNameColNum { get; set; }
-        
+
         /// <summary>
         /// The account number of the constituent
         /// </summary>
         public int AccountNumColNum { get; set; }
-        
+
         /// <summary>
         /// The street address of the constituent resident
         /// </summary>
         public int CityAddressColNum { get; set; }
-       
+
         /// <summary>
         /// The city of the constituent resident
         /// </summary>
         public int CityColNum { get; set; }
-        
+
         /// <summary>
         /// The state of the constituent resident
         /// </summary>
         public int StateColNum { get; set; }
-       
+
         /// <summary>
         /// The sip code of the consituents resident
         /// </summary>
         public int ZipCodeColNum { get; set; }
-       
+
         /// <summary>
         /// The email of the constituent
         /// </summary>
@@ -598,6 +624,11 @@ namespace Donor
         /// The constitunets phone number
         /// </summary>
         public int PhoneColNum { get; set; }
+
+        /// <summary>
+        /// The date the constituent was created
+        /// </summary>
+        public int CreatedDate { get; set; }
 
     }
 

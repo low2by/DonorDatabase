@@ -14,7 +14,7 @@ namespace Donor
             name = _name;
             accountNumber = _accountNumber;
             DonationDate = _donationDate;
-            if(Double.TryParse(_donationAmount, out double donationAmount))
+            if (Double.TryParse(_donationAmount, out double donationAmount))
             {
                 DonationAmount = donationAmount;
             }
@@ -101,25 +101,5 @@ namespace Donor
                 return DonationAmount;
             }
         }
-    }
-
-    public static class MyExtensions
-    {
-        public static bool TransactionsMatch(this Transaction donation, Transaction incomingDonation)
-        {
-            if (donation.DonationDate.Trim().Equals(incomingDonation.DonationDate.Trim()) && 
-                donation.Campaign.Trim().Equals(incomingDonation.Campaign.Trim()) &&
-                donation.MiniCampaign.Trim().Equals(incomingDonation.MiniCampaign.Trim()) &&
-                donation.Fund.Trim().Equals(incomingDonation.Fund.Trim()) &&
-                donation.TransactionType.Trim().Equals(incomingDonation.TransactionType.Trim()) &&
-                donation.TransactionMethod.Trim().Equals(incomingDonation.TransactionMethod.Trim()) &&
-                donation.Amount == incomingDonation.Amount
-                )
-            {
-                return true;
-            }
-            return false;
-        }
-
     }
 }
