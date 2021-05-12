@@ -610,35 +610,58 @@ namespace Donor
         /// </summary>
         /// <param name="constituents"></param>
         /// <returns></returns>
-        public static Dictionary<string, Constituents> RemoveDublicates(this Dictionary<string, Constituents> constituents)
+        public static Dictionary<string, Constituents> RemoveDublicates(this Dictionary<string, Constituents> constituents, ref Dictionary<string, Constituents> remove)
         {
+            Dictionary<string, Constituents> result = new Dictionary<string, Constituents>(constituents);
 
-            Dictionary<string, Constituents> nonDubCons = new Dictionary<string, Constituents>();
-            Dictionary<string, Constituents> removedDubCons = new Dictionary<string, Constituents>();
+            //find people who have matching names
+            Dictionary<string, Constituents> matchingNames = result.MatchingNames();
 
-            //make a list. this list will help us remove constituents that we belive are dublicates
-            //List<Constituents> cons = new List<Constituents>(constituents.Values.ToList());
+            List<Constituents> matchingNameList = matchingNames.Values.ToList();
 
-            //two foreach loops
-            //the first loop gets the cons
-            //in the second foreach loop, we get a consCompare. this will be from the constituents dictionary list
-            //we compare the cons and consCompare if the names match (last and first name)
-            //if the names match, we compare the attributes and see which attribute they do not have
-            //check which one has the most attributes and add the missing attribute to it
-            //add the new cons with the most attributes and the new added one and put it in the nonDubCons list
-            //if the con is not in the removed list add the con 
-            foreach (KeyValuePair<string, Constituents> cons in constituents)
+            foreach(Constituents con in matchingNameList)
             {
-                foreach (KeyValuePair<string, Constituents> consCompare in constituents)
+                //check if each constituent has a another person that matches
+                //check the date,
+                //if the the constituent has a donation, 
+                //move it over to the older date constituent and remove the newer constiuent.
+                foreach(Constituents conCompare in matchingNameList)
                 {
-                    if (cons.Value.GetName().Equals(consCompare.Value.GetName()))
-                    {
+                    if (con.GetAccountNumber().Equals(conCompare.GetAccountNumber()))
+                        continue;
 
+                    double conDate = date(con.GetCreatedDate());
+                    double conCompareDate = date(conCompare.GetCreatedDate());
+
+                    if (conDate <= conCompareDate)
+                    {
+                        foreach(Transaction conCompareTrans in conCompare.GetTransactions())
+                        {
+                            con.AddTransaction(conCompareTrans);
+                        }
+                        conCompare.GetTransactions().Clear();
+                        remove.Add(conCompare.GetAccountNumber(), conCompare);
+                        result.Remove(conCompare.GetAccountNumber());
                     }
                 }
             }
 
-            return nonDubCons;
+            return result;
+        }
+
+        public static double date(string date)
+        {
+            double result;
+
+            string dateStr = "";
+            string[] numDate = date.Split('/');
+            for (int i = 0; i < numDate.Length; i++)
+            {
+                dateStr += numDate[i];
+            }
+
+            double.TryParse(dateStr, out result);
+            return result;
         }
 
         /// <summary>
@@ -782,6 +805,10 @@ namespace Donor
                             {
                                 matchnames.Add(consCompare.Key, consCompare.Value);
                                 matchnames.Add(cons.Key, cons.Value);
+
+                                //check the date of the constituent we are comparing to. 
+                                //if the constituent's date is newer, then it is the updated constituents
+                                //if(consCompare.)
                             }
 
                         }

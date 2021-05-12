@@ -20,7 +20,7 @@ namespace Donor
             Dictionary<string, Constituents> constituents = new Dictionary<string, Constituents>();
             List<Transaction> transactions = new List<Transaction>();
 
-            foreach (string file in Directory.EnumerateFiles(@"C:\Users\elotubai10\Desktop\donordatabase\", "*.xlsx"))
+            foreach (string file in Directory.EnumerateFiles(@"C:\Users\elotubai10\OneDrive - Granite School District\donordatabase\", "*.xlsx"))
             {
                 BloomerangColumnHeaderConstituents headerConstituents = new BloomerangColumnHeaderConstituents();
                 BloomerangColumnHeaderTransaction headerTransaction = new BloomerangColumnHeaderTransaction();
@@ -31,22 +31,14 @@ namespace Donor
                 GetExcelFile(ref filepath, ref constituents, ref transactions, ref headerConstituents, ref headerTransaction, ref headerCharityproud);
             }
 
-
-            //get the constituents with match names
-            Dictionary<string, Constituents> matchingnames = new Dictionary<string, Constituents>(constituents.MatchingNames());
-
-            Dictionary<string, Constituents> matchingnamesWithTrans = matchingnames.AddTransaction(ref transactions);
-
-            //compare dates, the most recent date with a matching name 
-            //foreach (KeyValuePair<string, Constituents> cons in matchingnames)
-            //{
-
-            //}
-
-            //Dictionary<string, Constituents> consWithTransactions = constituents.AddTransaction(ref transactions);
+            Dictionary<string, Constituents> consWithTransactions = constituents.AddTransaction(ref transactions);
+            Dictionary<string, Constituents> removedDub = new Dictionary<string, Constituents>();
+            Dictionary<string, Constituents> consWithTransactions_removedDub = consWithTransactions.RemoveDublicates(ref removedDub);
 
             //Dictionary<string, Constituents> combinedCharityBloomarang = constituents.CombineCharityBloomarang();
-            WriteExcelFile(ref matchingnames, "matching names");
+            WriteExcelFile(ref consWithTransactions, "constituents with their transactions");
+            WriteExcelFile(ref consWithTransactions_removedDub, "No dublicates");
+            WriteExcelFile(ref removedDub, "remove from bloomerang");
 
             Console.WriteLine("All Done *Zara's voice*");
             Console.Read();
@@ -67,7 +59,7 @@ namespace Donor
             int colCount = xlRange.Columns.Count;
 
             //this is for testing. delete leter
-            rowCount = 10;
+            rowCount = 200;
 
 
             //iterate over the rows and columns and print to the console as it appears in the file
@@ -204,7 +196,7 @@ namespace Donor
                         row += 1;
                         addRow = false;
 
-                        Console.WriteLine("Constituent: " + transNum + " of " + cons.Value.GetTransactions().Count);
+                        //Console.WriteLine("Constituent: " + transNum + " of " + cons.Value.GetTransactions().Count);
                     }
 
                     transNum = 0;
@@ -215,7 +207,7 @@ namespace Donor
                 }
 
                 excelApp.DisplayAlerts = false;
-                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\Desktop\donordatabaseresult\" + filename + ".xls", Excel.XlFileFormat.xlWorkbookNormal);
+                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\OneDrive - Granite School District\donordatabaseresult\" + filename + ".xls", Excel.XlFileFormat.xlWorkbookNormal);
                 excelApp.DisplayAlerts = true;
 
                 excelWorkbook.Close();
