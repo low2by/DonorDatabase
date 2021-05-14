@@ -32,13 +32,17 @@ namespace Donor
             }
 
             Dictionary<string, Constituents> consWithTransactions = constituents.AddTransaction(ref transactions);
-            Dictionary<string, Constituents> removedDub = new Dictionary<string, Constituents>();
-            Dictionary<string, Constituents> consWithTransactions_removedDub = consWithTransactions.RemoveDublicates(ref removedDub);
+            Dictionary<string, Constituents> removeCons = new Dictionary<string, Constituents>();
+            Dictionary<string, Transaction> removeTrans = new Dictionary<string, Transaction>();
+            Dictionary<string, Transaction> addTrans = new Dictionary<string, Transaction>();
+            Dictionary<string, Constituents> consWithTransactions_removedDub = consWithTransactions.RemoveDublicates(ref removeCons, ref removeTrans, ref addTrans);
 
             //Dictionary<string, Constituents> combinedCharityBloomarang = constituents.CombineCharityBloomarang();
-            WriteExcelFile(ref consWithTransactions, "constituents with their transactions");
-            WriteExcelFile(ref consWithTransactions_removedDub, "No dublicates");
-            WriteExcelFile(ref removedDub, "remove from bloomerang");
+            WriteExcelFile(ref consWithTransactions, "all constituents with their trasactions");
+            WriteExcelFile(ref consWithTransactions_removedDub, "all constituents with their trasaction no dublicates");
+            WriteExcelFileDonors(ref removeCons, "the duplicates that were removed");
+            WriteExcelFileTrans(ref removeTrans, "the transactions that were removed");
+            WriteExcelFileTrans(ref addTrans, "the transactions that were added");
 
             Console.WriteLine("All Done *Zara's voice*");
             Console.Read();
@@ -59,7 +63,7 @@ namespace Donor
             int colCount = xlRange.Columns.Count;
 
             //this is for testing. delete leter
-            rowCount = 200;
+            //rowCount = 200;
 
 
             //iterate over the rows and columns and print to the console as it appears in the file
@@ -203,6 +207,126 @@ namespace Donor
                     consNum += 1;
                     if (addRow)
                         row += 1;
+
+                }
+
+                excelApp.DisplayAlerts = false;
+                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\OneDrive - Granite School District\donordatabaseresult\" + filename + ".xls", Excel.XlFileFormat.xlWorkbookNormal);
+                excelApp.DisplayAlerts = true;
+
+                excelWorkbook.Close();
+                excelApp.Quit();
+
+                Marshal.FinalReleaseComObject(excelWorksheet);
+                Marshal.FinalReleaseComObject(excelWorkbook);
+                Marshal.FinalReleaseComObject(excelApp);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
+
+        public static void WriteExcelFileDonors(ref Dictionary<string, Constituents> constitunets, string filename)
+        {
+            Console.WriteLine("Writing to File");
+            Excel.Application excelApp = new Excel.Application();
+            if (excelApp != null)
+            {
+                Excel.Workbook excelWorkbook = excelApp.Workbooks.Add();
+                Excel.Worksheet excelWorksheet = (Excel.Worksheet)excelWorkbook.Sheets.Add();
+                Excel.Range xlRange = excelWorksheet.UsedRange;
+
+                xlRange.Cells[1, 1] = "Account Number";
+                xlRange.Cells[1, 2] = "Name";
+                xlRange.Cells[1, 3] = "Last Name";
+                xlRange.Cells[1, 4] = "First Name";
+                xlRange.Cells[1, 5] = "Primary Street";
+                xlRange.Cells[1, 6] = "Primary City";
+                xlRange.Cells[1, 7] = "Primary State";
+                xlRange.Cells[1, 8] = "Primary ZIP Code";
+                xlRange.Cells[1, 9] = "Primary Phone Number";
+                xlRange.Cells[1, 10] = "Primary Email Address";
+                xlRange.Cells[1, 11] = "Type";
+
+                int row = 2;
+                int consNum = 1;
+                //, transNum = 0;
+                //bool addRow;
+                foreach (KeyValuePair<string, Constituents> cons in constitunets)
+                {
+                    xlRange.Cells[row, 1] = cons.Value.GetAccountNumber();
+                    xlRange.Cells[row, 2] = cons.Value.GetName();
+                    xlRange.Cells[row, 3] = cons.Value.GetLastName();
+                    xlRange.Cells[row, 4] = cons.Value.GetFirstName();
+                    xlRange.Cells[row, 5] = cons.Value.GetAddress();
+                    xlRange.Cells[row, 6] = cons.Value.GetCity();
+                    xlRange.Cells[row, 7] = cons.Value.GetState();
+                    xlRange.Cells[row, 8] = cons.Value.GetZipCode();
+                    xlRange.Cells[row, 9] = cons.Value.GetPhoneNumber();
+                    xlRange.Cells[row, 10] = cons.Value.GetEmail();
+                    xlRange.Cells[row, 11] = cons.Value.GetTypeOfConstituent();
+                    xlRange.Cells[row, 21] = cons.Value.TotalDonation();
+
+                    Console.WriteLine("Constituent: " + consNum + " of " + constitunets.Count);
+
+                    consNum += 1;
+                    row += 1;
+
+                }
+
+                excelApp.DisplayAlerts = false;
+                excelApp.ActiveWorkbook.SaveAs(@"C:\Users\elotubai10\OneDrive - Granite School District\donordatabaseresult\" + filename + ".xls", Excel.XlFileFormat.xlWorkbookNormal);
+                excelApp.DisplayAlerts = true;
+
+                excelWorkbook.Close();
+                excelApp.Quit();
+
+                Marshal.FinalReleaseComObject(excelWorksheet);
+                Marshal.FinalReleaseComObject(excelWorkbook);
+                Marshal.FinalReleaseComObject(excelApp);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
+
+        public static void WriteExcelFileTrans(ref Dictionary<string, Transaction> transactions, string filename)
+        {
+            Console.WriteLine("Writing to File");
+            Excel.Application excelApp = new Excel.Application();
+            if (excelApp != null)
+            {
+                Excel.Workbook excelWorkbook = excelApp.Workbooks.Add();
+                Excel.Worksheet excelWorksheet = (Excel.Worksheet)excelWorkbook.Sheets.Add();
+                Excel.Range xlRange = excelWorksheet.UsedRange;
+
+                xlRange.Cells[1, 1] = "Account Number";
+                xlRange.Cells[1, 2] = "Date";
+                xlRange.Cells[1, 3] = "Campaign";
+                xlRange.Cells[1, 4] = "Mini-Campaign";
+                xlRange.Cells[1, 5] = "Fund";
+                xlRange.Cells[1, 6] = "Type";
+                xlRange.Cells[1, 7] = "Method";
+                xlRange.Cells[1, 8] = "Amount";
+                xlRange.Cells[1, 9] = "In Kind Market Value";
+                xlRange.Cells[1, 10] = "In Kind Description";
+
+                int row = 2;
+                int transNum = 0;
+                //bool addRow;
+                foreach (KeyValuePair<string, Transaction> trans in transactions)
+                {
+                    xlRange.Cells[row, 1] = trans.Value.GetAccountNumber();
+                    xlRange.Cells[row, 2] = trans.Value.DonationDate;
+                    xlRange.Cells[row, 3] = trans.Value.Campaign;
+                    xlRange.Cells[row, 4] = trans.Value.MiniCampaign;
+                    xlRange.Cells[row, 5] = trans.Value.Fund;
+                    xlRange.Cells[row, 6] = trans.Value.TransactionType;
+                    xlRange.Cells[row, 7] = trans.Value.TransactionMethod;
+                    xlRange.Cells[row, 8] = trans.Value.DonationAmount;
+                    xlRange.Cells[row, 9] = trans.Value.InKindMarketValue;
+                    xlRange.Cells[row, 10] = trans.Value.InKindDescr;
+                    Console.WriteLine("Transaction: " + transNum + " of " + transactions.Count);
+                    transNum++;
+                    row += 1;
 
                 }
 

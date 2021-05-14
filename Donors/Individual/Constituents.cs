@@ -109,15 +109,24 @@ namespace Donor
         {
             return billingAddress.CityAddress;
         }
+        public void GetAddress(string address)
+        {
+            billingAddress.CityAddress = address;
+        }
 
         public bool HasAddress()
         {
-            return billingAddress.CityAddress.Trim().Count() == 0;
+            return billingAddress.CityAddress.Trim().Length > 0;
         }
 
         public string GetState()
         {
             return billingAddress.State;
+        }
+
+        public void GetState( string state)
+        {
+            billingAddress.State = state;
         }
 
         public bool HasState()
@@ -130,9 +139,19 @@ namespace Donor
             return billingAddress.City;
         }
 
+        public void GetCity(string city)
+        {
+            billingAddress.City = city;
+        }
+
+        public void SetCity(string city)
+        {
+            billingAddress.City = city;
+        }
+
         public bool HasCity()
         {
-            return billingAddress.City.Trim().Count() == 0;
+            return billingAddress.City.Trim().Count() > 0;
         }
 
         public string GetZipCode()
@@ -143,10 +162,14 @@ namespace Donor
             //return billingAddress.ZipCode;
             return zipCode[0];
         }
+        public void GetZipCode(string zip)
+        {
+            billingAddress.ZipCode = zip;
+        }
 
         public bool HasZipCode()
         {
-            return billingAddress.ZipCode.Trim().Count() == 0;
+            return billingAddress.ZipCode.Trim().Count() > 0;
         }
 
         public string GetLastName()
@@ -156,7 +179,7 @@ namespace Donor
 
         public bool HasLastName()
         {
-            return contactInformation.LastName().Trim().Count() == 0;
+            return contactInformation.LastName().Trim().Count() > 0;
         }
 
         public string GetFirstName()
@@ -166,27 +189,40 @@ namespace Donor
 
         public bool HasFirstName()
         {
-            return contactInformation.FirstName().Trim().Count() == 0;
+            return contactInformation.FirstName().Trim().Count() > 0;
         }
 
         public string GetEmail()
         {
             return contactInformation.Email();
         }
+        public void GetEmail(string email)
+        {
+            contactInformation.Email(email);
+        }
+
+        public void SetEmail(string email)
+        {
+            contactInformation.Email(email);
+        }
 
         public bool HasEmail()
         {
-            return contactInformation.Email().Trim().Count() == 0;
+            return contactInformation.Email().Trim().Count() > 0;
         }
 
         public string GetPhoneNumber()
         {
             return contactInformation.PhoneNumber();
         }
+        public void GetPhoneNumber(string num)
+        {
+           contactInformation.PhoneNumber(num);
+        }
 
         public bool HasPhoneNumber()
         {
-            return contactInformation.PhoneNumber().Trim().Count() == 0;
+            return contactInformation.PhoneNumber().Trim().Count() > 0;
         }
 
     }
@@ -242,9 +278,17 @@ namespace Donor
         {
             return email;
         }
+        public void Email(string _email)
+        {
+            email = _email;
+        }
         public string PhoneNumber()
         {
             return phoneNumber;
+        }
+        public void PhoneNumber(string num)
+        {
+            phoneNumber = num;
         }
     }
 
@@ -610,7 +654,7 @@ namespace Donor
         /// </summary>
         /// <param name="constituents"></param>
         /// <returns></returns>
-        public static Dictionary<string, Constituents> RemoveDublicates(this Dictionary<string, Constituents> constituents, ref Dictionary<string, Constituents> remove)
+        public static Dictionary<string, Constituents> RemoveDublicates(this Dictionary<string, Constituents> constituents, ref Dictionary<string, Constituents> removeCons, ref Dictionary<string, Transaction> removeTrans, ref Dictionary<string, Transaction> addTrans)
         {
             Dictionary<string, Constituents> result = new Dictionary<string, Constituents>(constituents);
 
@@ -627,21 +671,63 @@ namespace Donor
                 //move it over to the older date constituent and remove the newer constiuent.
                 foreach(Constituents conCompare in matchingNameList)
                 {
-                    if (con.GetAccountNumber().Equals(conCompare.GetAccountNumber()))
+                    if (con.GetAccountNumber().Equals(conCompare.GetAccountNumber()) || !con.GetName().Equals(conCompare.GetName()) || removeCons.ContainsKey(con.GetAccountNumber()))
                         continue;
 
-                    double conDate = date(con.GetCreatedDate());
-                    double conCompareDate = date(conCompare.GetCreatedDate());
+                    DateTime conDate = date(con.GetCreatedDate());
+                    DateTime conCompareDate = date(conCompare.GetCreatedDate());
+                    int cmp = DateTime.Compare(conDate, conCompareDate);
 
-                    if (conDate <= conCompareDate)
+                    if (cmp <= 0)
                     {
                         foreach(Transaction conCompareTrans in conCompare.GetTransactions())
                         {
-                            con.AddTransaction(conCompareTrans);
+                            removeTrans.Add(conCompareTrans.GetAccountNumber(), conCompareTrans);
+                            conCompareTrans.SetAccountNumber(con.GetAccountNumber());
+                            addTrans.Add(conCompareTrans.GetAccountNumber(), conCompareTrans);
+                            if (result.ContainsKey(con.GetAccountNumber()))
+                                result[con.GetAccountNumber()].AddTransaction(conCompareTrans);
                         }
-                        conCompare.GetTransactions().Clear();
-                        remove.Add(conCompare.GetAccountNumber(), conCompare);
-                        result.Remove(conCompare.GetAccountNumber());
+
+                        if(conCompare.HasAddress())
+                        {
+                            con.GetAddress(conCompare.GetAddress());
+                        }
+
+                        if(conCompare.HasCity())
+                        {
+                            con.GetCity(conCompare.GetCity());
+                        }
+
+                        if(conCompare.HasState())
+                        {
+                            con.GetState(conCompare.GetState());
+                        }
+
+                        if(conCompare.HasZipCode())
+                        {
+                            con.GetZipCode(conCompare.GetZipCode());
+                        }
+
+                        if(conCompare.HasPhoneNumber())
+                        {
+                            con.GetPhoneNumber(conCompare.GetPhoneNumber());
+                        }
+
+                        if(conCompare.HasEmail())
+                        {
+                            con.GetEmail(conCompare.GetEmail());
+                        }
+
+                        if(!removeCons.ContainsKey(conCompare.GetAccountNumber()))
+                            removeCons.Add(conCompare.GetAccountNumber(), conCompare);
+
+                        if (result.ContainsKey(conCompare.GetAccountNumber()))
+                        {
+                            result.Remove(conCompare.GetAccountNumber());
+                        }
+
+                           
                     }
                 }
             }
@@ -649,18 +735,20 @@ namespace Donor
             return result;
         }
 
-        public static double date(string date)
+        public static DateTime date(string date)
         {
-            double result;
+            DateTime result = new DateTime();
 
-            string dateStr = "";
             string[] numDate = date.Split('/');
-            for (int i = 0; i < numDate.Length; i++)
+
+            if(numDate.Length == 3)
             {
-                dateStr += numDate[i];
+                int.TryParse(numDate[0], out int month);
+                int.TryParse(numDate[1], out int day);
+                int.TryParse(numDate[2], out int year);
+                result = new DateTime(year, month, day);
             }
 
-            double.TryParse(dateStr, out result);
             return result;
         }
 

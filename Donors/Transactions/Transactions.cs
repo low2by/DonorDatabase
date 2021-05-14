@@ -76,6 +76,11 @@ namespace Donor
         {
             return accountNumber;
         }
+
+        public void SetAccountNumber(string _accountNumber)
+        {
+            accountNumber = _accountNumber;
+        }
         public string GetName { get => name.Trim(); private set { } }
         public string DonationDate { private set; get; }
         public double DonationAmount { set; get; }
